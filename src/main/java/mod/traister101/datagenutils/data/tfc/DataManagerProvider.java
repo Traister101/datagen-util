@@ -18,9 +18,9 @@ import java.util.concurrent.CompletableFuture;
 public abstract class DataManagerProvider<T> implements DataProvider {
 
 	protected final CompletableFuture<?> contentDone;
+	protected final String modid;
 	private final DataManager<T> manager;
 	private final CompletableFuture<HolderLookup.Provider> lookup;
-	private final String modid;
 	private final ImmutableMap.Builder<ResourceLocation, T> elements;
 	private final PackOutput.PathProvider path;
 
