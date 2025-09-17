@@ -75,4 +75,21 @@ public abstract class DataManagerProvider<T> implements DataProvider {
 	}
 
 	protected abstract void addData(final HolderLookup.Provider provider);
+
+	protected abstract class DataBuilder {
+
+		protected final void add(final String name) {
+			DataManagerProvider.this.add(name, build());
+		}
+
+		protected final void add(final ResourceLocation name) {
+			DataManagerProvider.this.add(name, build());
+		}
+
+		protected final void add(final DataManager.Reference<T> reference) {
+			DataManagerProvider.this.add(reference, build());
+		}
+
+		protected abstract T build();
+	}
 }
