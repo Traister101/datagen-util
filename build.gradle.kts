@@ -228,7 +228,7 @@ publishing {
         mavenLocal()
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/traister101/DatagenUtils")
+            url = uri("https://maven.pkg.github.com/traister101/datagen-util")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
