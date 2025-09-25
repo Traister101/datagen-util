@@ -1,10 +1,10 @@
 package mod.traister101.datagenutils.data.tfc;
 
 import mod.traister101.datagenutils.data.EnhancedRecipeProvider.AdditionalRecipeProvider;
+import mod.traister101.datagenutils.data.util.tfc.TFCFluidHeat;
 import net.dries007.tfc.common.component.heat.*;
 import net.dries007.tfc.common.recipes.HeatingRecipe;
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
-import net.dries007.tfc.util.*;
 import net.dries007.tfc.util.data.FluidHeat;
 import net.neoforged.neoforge.fluids.FluidStack;
 
@@ -27,12 +27,12 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 
 	/**
 	 * @param ingredient The ingredient
-	 * @param fluidHeat The fluid heat to use
+	 * @param fluidHeat The fluid heat to use see {@link TFCFluidHeat}
 	 * @param units The units
 	 */
 	protected static HeatDefinition heat(final Ingredient ingredient, final FluidHeat fluidHeat, final int units) {
-		return heat(ingredient, (fluidHeat.specificHeatCapacity() / FluidHeatProvider.HEAT_CAPACITY) * (units / 100f),
-				fluidHeat.meltTemperature() * 0.6f, fluidHeat.meltTemperature() * 0.8f);
+		return heat(ingredient, (fluidHeat.specificHeatCapacity() / TFCFluidHeat.HEAT_CAPACITY) * (units / 100F),
+				fluidHeat.meltTemperature() * 0.6F, fluidHeat.meltTemperature() * 0.8F);
 	}
 
 	/**
@@ -46,13 +46,6 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 		return new HeatDefinition(ingredient, heatCapacity, forgingTemperature, weldingTemperature);
 	}
 
-	/**
-	 * @param location The fluid heat location
-	 */
-	protected static FluidHeat fluidHeat(final ResourceLocation location) {
-		return FluidHeat.MANAGER.getOrThrow(location);
-	}
-
 	@Override
 	public Stream<? extends RecipeHolder<?>> additionalRecipes() {
 		return meltingRecipes.stream();
@@ -61,21 +54,20 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 	/**
 	 * @param name The name
 	 * @param ingredient The ingredient
-	 * @param metal The TFC metal
+	 * @param fluidHeat The fluid heat see {@link TFCFluidHeat}
 	 * @param units The units
 	 */
-	protected void addAndMelt(final String name, final Ingredient ingredient, final Metal metal, final int units) {
-		addAndMelt(ResourceLocation.fromNamespaceAndPath(modid, name), ingredient, metal, units);
+	protected final void addAndMelt(final String name, final Ingredient ingredient, final FluidHeat fluidHeat, final int units) {
+		addAndMelt(ResourceLocation.fromNamespaceAndPath(modid, name), ingredient, fluidHeat, units);
 	}
 
 	/**
 	 * @param id The id
 	 * @param ingredient The ingredient
-	 * @param metal The TFC metal
+	 * @param fluidHeat The fluid heat see {@link TFCFluidHeat}
 	 * @param units The units
 	 */
-	private void addAndMelt(final ResourceLocation id, final Ingredient ingredient, final Metal metal, final int units) {
-		final var fluidHeat = fluidHeat(Helpers.identifier(metal.getSerializedName()));
+	protected final void addAndMelt(final ResourceLocation id, final Ingredient ingredient, final FluidHeat fluidHeat, final int units) {
 		addMelt(id.withPrefix("heating/"), ingredient, fluidHeat, units);
 		add(id, heat(ingredient, fluidHeat, units));
 	}
@@ -83,10 +75,10 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 	/**
 	 * @param id The id
 	 * @param ingredient The ingredient
-	 * @param fluidHeat The fluid heat
+	 * @param fluidHeat The fluid heat see {@link TFCFluidHeat}
 	 * @param units The units
 	 */
-	private void addMelt(final ResourceLocation id, final Ingredient ingredient, final FluidHeat fluidHeat, final int units) {
+	protected final void addMelt(final ResourceLocation id, final Ingredient ingredient, final FluidHeat fluidHeat, final int units) {
 		meltingRecipes.add(new RecipeHolder<>(id,
 				new HeatingRecipe(ingredient, ItemStackProvider.empty(), new FluidStack(fluidHeat.fluid(), units), fluidHeat.meltTemperature(),
 						false)));
