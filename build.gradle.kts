@@ -17,8 +17,6 @@ val modGroupId: String by project
 val modAuthors: String by project
 val modDescription: String by project
 
-val datagenOutput: String = "src/generated/resources"
-
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
     val modReplacementProperties = mapOf(
         "mod_id" to modId,
@@ -52,17 +50,9 @@ java {
 sourceSets {
     main {
         resources {
-            srcDir(datagenOutput)
             srcDir(generateModMetadata)
         }
     }
-    test {
-        resources {
-            // Pull down our generated data for tests
-            srcDir(datagenOutput)
-        }
-    }
-    create("datagen")
 }
 
 /**
@@ -77,11 +67,6 @@ configurations.runtimeClasspath.configure {
     extendsFrom(localRuntime)
 }
 
-configurations {
-    get("datagenCompileClasspath").extendsFrom(compileClasspath.get())
-    get("datagenRuntimeClasspath").extendsFrom(runtimeClasspath.get())
-}
-
 neoForge {
     version = libs.versions.neforge.get()
     addModdingDependenciesTo(sourceSets["datagen"])
@@ -92,67 +77,10 @@ neoForge {
         mappingsVersion = libs.versions.parchment
     }
 
-    runs {
-        configureEach {
-            // Recommended logging data for a userdev environment
-            // The markers can be added/remove as needed separated by commas.
-            // "SCAN": For mods scan.
-            // "REGISTRIES": For firing of registry events.
-            // "REGISTRYDUMP": For getting the contents of all registries.
-            systemProperty("neoforge.logging.markers", "REGISTRIES")
-            logLevel = Level.DEBUG
-            systemProperty("neoforge.enabledGameTestNamespaces", modId)
-
-            // Only JBR allows enhanced class redefinition, so ignore the option for any other JDKs
-            jvmArguments.addAll("-XX:+IgnoreUnrecognizedVMOptions", "-XX:+AllowEnhancedClassRedefinition", "-ea")
-        }
-
-        register("client") {
-            client()
-            gameDirectory = file("run/client")
-        }
-
-        register("server") {
-            server()
-            gameDirectory = file("run/server")
-            programArgument("--nogui")
-        }
-
-        register("datagen") {
-            data()
-            gameDirectory = file("run/datagen")
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll(
-                "--mod",
-                modId,
-                "--all",
-                "--output",
-                file(datagenOutput).path,
-                "--existing",
-                file("src/main/resources/").path,
-                "--existing-mod",
-                "tfc"
-            )
-        }
-
-        register("gameTest") {
-            type = "gameTestServer"
-            gameDirectory = file("run/game_test")
-        }
-    }
-
     mods {
         create(modId) {
             sourceSet(sourceSets.main.get())
-            sourceSet(sourceSets.test.get())
-            sourceSet(sourceSets["datagen"])
         }
-    }
-
-    unitTest {
-        enable()
-        testedMod = mods[modId]
     }
 
     ideSyncTask(generateModMetadata)
@@ -187,9 +115,6 @@ repositories {
 }
 
 dependencies {
-    // datagen can use mod code
-    "datagenImplementation"(sourceSets["main"].output)
-
     // Lombok because yes
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
