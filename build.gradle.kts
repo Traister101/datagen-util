@@ -1,5 +1,4 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
-import org.slf4j.event.Level
 
 plugins {
     idea
@@ -69,13 +68,7 @@ configurations.runtimeClasspath.configure {
 
 neoForge {
     version = libs.versions.neforge.get()
-    addModdingDependenciesTo(sourceSets["datagen"])
     validateAccessTransformers = true
-
-    parchment {
-        minecraftVersion = libs.versions.parchmentMinecraft
-        mappingsVersion = libs.versions.parchment
-    }
 
     mods {
         create(modId) {
