@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.errorprone.annotations.*;
 import com.google.errorprone.annotations.CheckReturnValue;
 import mod.traister101.datagenutils.data.recipe.*;
-import mod.traister101.datagenutils.data.util.ShapedRecipePatternBuilder;
+import mod.traister101.datagenutils.data.util.*;
 import net.dries007.tfc.common.recipes.*;
 import net.dries007.tfc.common.recipes.outputs.*;
 
@@ -190,10 +190,11 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 	 */
 	@ToString
 	@CanIgnoreReturnValue
-	public static final class AdvancedShapedRecipeBuilder extends AdvancedCraftingRecipeBuilder<AdvancedShapedRecipeBuilder> {
+	public static final class AdvancedShapedRecipeBuilder extends AdvancedCraftingRecipeBuilder<AdvancedShapedRecipeBuilder> implements
+			ShapedRecipeBuilder<AdvancedShapedRecipeBuilder> {
 
-		@Delegate(excludes = ShapedRecipePatternBuilder.DelegateExclusions.class)
-		private final ShapedRecipePatternBuilder<AdvancedShapedRecipeBuilder> patternBuilder = new ShapedRecipePatternBuilder<>(this);
+		@Delegate(excludes = ShapedPatternBuilder.Exclusions.class)
+		private final ShapedPatternBuilder<AdvancedShapedRecipeBuilder> patternBuilder = new ShapedPatternBuilder<>(this);
 		private boolean showNotification = true;
 		private int inputRow;
 		private int inputColumn;
@@ -249,7 +250,7 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 		@Override
 		protected void ensureValid(final ResourceLocation recipeId) {
 			super.ensureValid(recipeId);
-			patternBuilder.ensureValid(recipeId);
+			patternBuilder.validate(recipeId);
 		}
 
 		@Override

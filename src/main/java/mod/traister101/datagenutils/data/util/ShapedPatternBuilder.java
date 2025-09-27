@@ -13,14 +13,13 @@ import java.util.*;
 
 /**
  * This class is intended to be used through composition via {@link lombok.experimental.Delegate}. See
- * {@link ShapedRecipePatternBuilder.DelegateExclusions}
+ * {@link Exclusions}
  *
  * @param <B> The parent builder type
  */
 @ToString
 @RequiredArgsConstructor
-@SuppressWarnings("unused")
-public final class ShapedRecipePatternBuilder<B> {
+public final class ShapedPatternBuilder<B> implements ShapedRecipeBuilder<B> {
 
 	/**
 	 * The parent builder
@@ -30,32 +29,17 @@ public final class ShapedRecipePatternBuilder<B> {
 	private final List<String> rows = Lists.newArrayList();
 	private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
 
-	/**
-	 * Defines a key for the recipe pattern.
-	 *
-	 * @param symbol The symbol key
-	 * @param tag The tag
-	 */
+	@Override
 	public B define(final Character symbol, final TagKey<Item> tag) {
 		return define(symbol, Ingredient.of(tag));
 	}
 
-	/**
-	 * Defines a key for the recipe pattern.
-	 *
-	 * @param symbol The symbol key
-	 * @param item The item
-	 */
+	@Override
 	public B define(final Character symbol, final ItemLike item) {
 		return define(symbol, Ingredient.of(item));
 	}
 
-	/**
-	 * Defines a key for the recipe pattern.
-	 *
-	 * @param symbol The symbol key
-	 * @param ingredient The ingredient value
-	 */
+	@Override
 	public B define(final Character symbol, final Ingredient ingredient) {
 		if (key.containsKey(symbol)) throw new IllegalArgumentException("Symbol '" + symbol + "' is already defined!");
 
@@ -65,13 +49,14 @@ public final class ShapedRecipePatternBuilder<B> {
 		return parentBuilder;
 	}
 
-	/**
-	 * Adds a new row to the pattern for this recipe.
-	 *
-	 * @param row A single row for the recipe pattern
-	 */
-	@SuppressWarnings("UnusedReturnValue")
-	public B row(final String row) {
+	@Override
+	public B pattern(final String... pattern) {
+		Arrays.stream(pattern).forEach(this::pattern);
+		return parentBuilder;
+	}
+
+	@Override
+	public B pattern(final String row) {
 		if (!rows.isEmpty() && row.length() != rows.getFirst().length()) {
 			throw new IllegalArgumentException("Pattern must be the same width on every line!");
 		}
@@ -81,21 +66,11 @@ public final class ShapedRecipePatternBuilder<B> {
 	}
 
 	/**
-	 * Adds multiple rows to the pattern for this recipe.
-	 *
-	 * @param pattern The recipe pattern as a list of rows
-	 */
-	public B pattern(final String... pattern) {
-		Arrays.stream(pattern).forEach(this::row);
-		return parentBuilder;
-	}
-
-	/**
 	 * Ensure the pattern is valid
 	 *
 	 * @param recipeId The recipe id (for more useful error reporting)
 	 */
-	public void ensureValid(final ResourceLocation recipeId) {
+	public void validate(final ResourceLocation recipeId) {
 		if (rows.isEmpty()) {
 			throw new IllegalStateException("No pattern is defined for shaped recipe " + recipeId + "!");
 		}
@@ -124,6 +99,8 @@ public final class ShapedRecipePatternBuilder<B> {
 	}
 
 	/**
+	 * Builds the {@link ShapedRecipePattern}
+	 *
 	 * @return The {@link ShapedRecipePattern} for the current builder state
 	 */
 	public ShapedRecipePattern build() {
@@ -133,9 +110,10 @@ public final class ShapedRecipePatternBuilder<B> {
 	/**
 	 * Helper interface for Lombok {@link lombok.experimental.Delegate} code gen
 	 */
-	public interface DelegateExclusions {
+	@SuppressWarnings("unused")
+	public interface Exclusions {
 
-		void ensureValid(final ResourceLocation recipeId);
+		void validate(final ResourceLocation recipeId);
 
 		ShapedRecipePattern build();
 	}

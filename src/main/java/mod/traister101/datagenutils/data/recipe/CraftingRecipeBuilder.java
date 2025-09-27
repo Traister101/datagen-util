@@ -2,8 +2,7 @@ package mod.traister101.datagenutils.data.recipe;
 
 import com.google.errorprone.annotations.*;
 import com.google.errorprone.annotations.CheckReturnValue;
-import mod.traister101.datagenutils.data.util.ShapedRecipePatternBuilder;
-import mod.traister101.datagenutils.data.util.ShapedRecipePatternBuilder.DelegateExclusions;
+import mod.traister101.datagenutils.data.util.*;
 
 import net.minecraft.advancements.Advancement.Builder;
 import net.minecraft.advancements.Criterion;
@@ -172,10 +171,11 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 	 * A recipe builder for vanilla {@link ShapedRecipe}s
 	 */
 	@CanIgnoreReturnValue
-	public static final class ShapedCraftingRecipeBuilder extends CraftingRecipeBuilder<ShapedCraftingRecipeBuilder> {
+	public static final class ShapedCraftingRecipeBuilder extends CraftingRecipeBuilder<ShapedCraftingRecipeBuilder> implements
+			ShapedRecipeBuilder<ShapedCraftingRecipeBuilder> {
 
-		@Delegate(excludes = DelegateExclusions.class)
-		private final ShapedRecipePatternBuilder<ShapedCraftingRecipeBuilder> patternBuilder = new ShapedRecipePatternBuilder<>(this);
+		@Delegate(excludes = ShapedPatternBuilder.Exclusions.class)
+		private final ShapedPatternBuilder<ShapedCraftingRecipeBuilder> patternBuilder = new ShapedPatternBuilder<>(this);
 		private boolean showNotification = true;
 
 		public ShapedCraftingRecipeBuilder(final String folderName, final CraftingBookCategory craftingBookCategory, final ItemStack result) {
@@ -190,7 +190,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		@Override
 		protected void ensureValid(final ResourceLocation recipeId) {
 			super.ensureValid(recipeId);
-			patternBuilder.ensureValid(recipeId);
+			patternBuilder.validate(recipeId);
 		}
 
 		@Override
