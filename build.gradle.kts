@@ -44,6 +44,7 @@ base {
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
     withSourcesJar()
+    withJavadocJar()
 }
 
 sourceSets {
@@ -113,7 +114,7 @@ dependencies {
     annotationProcessor(libs.lombok)
 
     // TFC!
-    implementation(libs.tfc)
+    compileOnly(libs.tfc)
 }
 
 idea {
@@ -136,9 +137,7 @@ publishing {
     publications {
         register<MavenPublication>("mavenJava") {
             artifactId = base.archivesName.get()
-
-            artifact(tasks.jar)
-            artifact(tasks.named("sourcesJar"))
+            from(components.getByName("java"))
         }
     }
 
