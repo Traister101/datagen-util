@@ -72,20 +72,20 @@ public final class EnhancedAdvancementProvider implements ExtraLanguageProvider,
 
 			final var advancementOutput = new AdvancementOutput() {
 				@Override
-				public AdvancementHolder accept(final ResourceLocation advancementId, final Advancement advancement, final ICondition... conditions) {
-					if (!set.add(advancementId)) throw new IllegalStateException("Duplicate advancement " + advancementId);
+				public AdvancementHolder accept(final AdvancementHolder advancement, final ICondition... conditions) {
+					if (!set.add(advancement.id())) throw new IllegalStateException("Duplicate advancement " + advancement.id());
 
-					advancement.parent().ifPresent(parent -> {
-						if (!existingFileHelper.exists(advancementId, ADVANCEMENT)) {
+					advancement.value().parent().ifPresent(parent -> {
+						if (!existingFileHelper.exists(advancement.id(), ADVANCEMENT)) {
 							throw new IllegalStateException(
-									"The parent: '%s' of advancement '%s', has not been saved yet!".formatted(parent, advancementId));
+									"The parent: '%s' of advancement '%s', has not been saved yet!".formatted(parent, advancement.id()));
 						}
 					});
 
-					existingFileHelper.trackGenerated(advancementId, ADVANCEMENT);
+					existingFileHelper.trackGenerated(advancement.id(), ADVANCEMENT);
 					list.add(DataProvider.saveStable(output, registries, Advancement.CONDITIONAL_CODEC,
-							Optional.of(new WithConditions<>(advancement, conditions)), pathProvider.json(advancementId)));
-					return new AdvancementHolder(advancementId, advancement);
+							Optional.of(new WithConditions<>(advancement.value(), conditions)), pathProvider.json(advancement.id())));
+					return advancement;
 				}
 
 				@Override

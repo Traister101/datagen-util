@@ -8,8 +8,7 @@ import mod.traister101.datagenutils.data.util.*;
 import net.dries007.tfc.common.recipes.*;
 import net.dries007.tfc.common.recipes.outputs.*;
 
-import net.minecraft.advancements.*;
-import net.minecraft.advancements.Advancement.Builder;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -163,7 +162,7 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 	}
 
 	@Override
-	protected @Nullable Advancement.Builder makeAdvancement(final Builder advancement) {
+	protected @Nullable AdvancementBuilder makeAdvancement(final AdvancementBuilder advancement) {
 		criteria.forEach(advancement::addCriterion);
 		return advancement;
 	}

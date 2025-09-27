@@ -4,7 +4,6 @@ import com.google.errorprone.annotations.*;
 import com.google.errorprone.annotations.CheckReturnValue;
 import mod.traister101.datagenutils.data.util.*;
 
-import net.minecraft.advancements.Advancement.Builder;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.RecipeBuilder;
@@ -160,7 +159,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 	}
 
 	@Override
-	protected @Nullable Builder makeAdvancement(final Builder advancement) {
+	protected @Nullable AdvancementBuilder makeAdvancement(final AdvancementBuilder advancement) {
 		criteria.forEach(advancement::addCriterion);
 		return advancement;
 	}

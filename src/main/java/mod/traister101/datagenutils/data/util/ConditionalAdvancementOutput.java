@@ -3,8 +3,7 @@ package mod.traister101.datagenutils.data.util;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import org.apache.commons.lang3.ArrayUtils;
 
-import net.minecraft.advancements.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.AdvancementHolder;
 
 import lombok.AllArgsConstructor;
 
@@ -15,7 +14,7 @@ class ConditionalAdvancementOutput implements AdvancementOutput {
 	private final ICondition[] conditions;
 
 	@Override
-	public AdvancementHolder accept(final ResourceLocation id, final Advancement advancement, final ICondition... conditions) {
+	public AdvancementHolder accept(final AdvancementHolder advancement, final ICondition... conditions) {
 		final ICondition[] innerConditions;
 		if (conditions.length == 0) {
 			innerConditions = this.conditions;
@@ -24,7 +23,7 @@ class ConditionalAdvancementOutput implements AdvancementOutput {
 		} else {
 			innerConditions = ArrayUtils.addAll(this.conditions, conditions);
 		}
-		return inner.accept(id, advancement, innerConditions);
+		return inner.accept(advancement, innerConditions);
 	}
 
 	@Override

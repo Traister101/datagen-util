@@ -1,8 +1,7 @@
 package mod.traister101.datagenutils.data.recipe;
 
-import net.minecraft.advancements.Advancement.Builder;
-import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import mod.traister101.datagenutils.data.util.AdvancementBuilder;
+
 import net.minecraft.data.recipes.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
@@ -58,12 +57,12 @@ public abstract class SimpleRecipeBuilder {
 	/**
 	 * Makes the advancement using the provided builder, if no advancement is required returns {@code null}
 	 *
-	 * @param advancement The advancement builder, pre-populated with the standard recipe unlock trigger, reward and requirements
+	 * @param builder The advancement builder, pre-populated with the standard recipe unlock trigger, reward and requirements
 	 *
 	 * @return A {@code null} advancement to signify no advancement is desired or an advancement builder
 	 */
 	@Nullable
-	protected Builder makeAdvancement(final Builder advancement) {
+	protected AdvancementBuilder makeAdvancement(final AdvancementBuilder builder) {
 		return null;
 	}
 
@@ -75,10 +74,7 @@ public abstract class SimpleRecipeBuilder {
 	 */
 	public final void save(final RecipeOutput recipeOutput, final ResourceLocation recipeId) {
 		ensureValid(recipeId);
-		final var advancement = makeAdvancement(recipeOutput.advancement()
-				.addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId))
-				.rewards(AdvancementRewards.Builder.recipe(recipeId))
-				.requirements(AdvancementRequirements.Strategy.OR));
+		final var advancement = makeAdvancement(AdvancementBuilder.recipe(recipeId));
 		final var realRecipeId = directory.isEmpty() ? recipeId : recipeId.withPrefix(directory + "/");
 		recipeOutput.accept(realRecipeId, recipe(), advancement == null ? null : advancement.build(realRecipeId.withPrefix("recipes/")));
 	}
