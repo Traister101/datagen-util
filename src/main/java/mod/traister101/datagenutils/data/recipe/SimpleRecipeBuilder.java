@@ -14,9 +14,14 @@ import javax.annotation.Nullable;
 @AllArgsConstructor
 public abstract class SimpleRecipeBuilder {
 
+	/**
+	 * The directory, can be empty to ignore
+	 */
 	private final String directory;
 
 	/**
+	 * Helper for getting a default recipe id from an {@link ItemLike}
+	 *
 	 * @param item The item to use for the default recipe id
 	 *
 	 * @return The default recipe id for this item
@@ -29,6 +34,8 @@ public abstract class SimpleRecipeBuilder {
 
 	/**
 	 * The default recipe id for this recipe
+	 *
+	 * @return The default recipe id to use
 	 */
 	protected abstract ResourceLocation getDefaultRecipeId();
 
@@ -42,11 +49,15 @@ public abstract class SimpleRecipeBuilder {
 	protected abstract void ensureValid(ResourceLocation recipeId) throws IllegalStateException;
 
 	/**
+	 * Create the recipe object
+	 *
 	 * @return Create the actual recipe object
 	 */
 	protected abstract Recipe<?> recipe();
 
 	/**
+	 * Makes the advancement using the provided builder, if no advancement is required returns {@code null}
+	 *
 	 * @param advancement The advancement builder, pre-populated with the standard recipe unlock trigger, reward and requirements
 	 *
 	 * @return A {@code null} advancement to signify no advancement is desired or an advancement builder
@@ -57,6 +68,8 @@ public abstract class SimpleRecipeBuilder {
 	}
 
 	/**
+	 * Save the recipe to the provided output using the provided id (prefixed with the directory)
+	 *
 	 * @param recipeOutput The recipe output
 	 * @param recipeId The recipe id. The directory is prepended
 	 */
@@ -71,6 +84,8 @@ public abstract class SimpleRecipeBuilder {
 	}
 
 	/**
+	 * Save the recipe to the provided output using the default recipe id
+	 *
 	 * @param recipeOutput The recipe output
 	 *
 	 * @implNote This uses the recipes default recipe id, some builders might not be able to generate a good default id so this can potentially throw
@@ -80,6 +95,8 @@ public abstract class SimpleRecipeBuilder {
 	}
 
 	/**
+	 * Save the recipe to the provided output using the id as specified by a string
+	 *
 	 * @param recipeOutput The recipe output
 	 * @param id A resource string for the location, if no namespace is specified it'll default to {@value ResourceLocation#DEFAULT_NAMESPACE}
 	 */

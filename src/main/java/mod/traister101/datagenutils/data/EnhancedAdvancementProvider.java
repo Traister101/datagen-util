@@ -43,6 +43,14 @@ public final class EnhancedAdvancementProvider implements ExtraLanguageProvider,
 	private final List<AdvancementSubProvider> subProviders;
 	private final List<LanguageTranslation> languageTranslations = new ArrayList<>();
 
+	/**
+	 * The constructor
+	 *
+	 * @param output The output
+	 * @param registries The registries
+	 * @param existingFileHelper The existing file helper
+	 * @param subProviders The sub providers actually adding advancements
+	 */
 	public EnhancedAdvancementProvider(final PackOutput output, final CompletableFuture<Provider> registries,
 			final ExistingFileHelper existingFileHelper, final List<AdvancementSubProvider> subProviders) {
 		this.pathProvider = output.createRegistryElementsPathProvider(Registries.ADVANCEMENT);

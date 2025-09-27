@@ -25,40 +25,90 @@ import java.util.*;
 
 /**
  * Similar to {@link CraftingRecipeBuilder} but for TFC's advanced crafting recipe types
+ *
+ * @param <B> The builder type. Either {@link AdvancedShapedRecipeBuilder} or {@link AdvancedShapelessRecipeBuilder}
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCraftingRecipeBuilder<B>> extends SimpleRecipeBuilder implements
 		RecipeBuilder {
 
-	public static final String DEFAULT_DIRECTORY = CraftingRecipeBuilder.DEFAULT_DIRECTORY;
-
+	/**
+	 * The result {@link ItemStackProvider}
+	 */
 	protected final ItemStackProvider result;
+	/**
+	 * The remainder {@link ItemStackProvider}s
+	 */
 	protected final List<ItemStackModifier> remainder = new ArrayList<>();
 	private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
 
+	/**
+	 * The constructor
+	 *
+	 * @param directory The directory
+	 * @param result The result
+	 */
 	protected AdvancedCraftingRecipeBuilder(final String directory, final ItemStackProvider result) {
 		super(directory);
 		this.result = result;
 	}
 
+	/**
+	 * A helper factory
+	 *
+	 * @param result The result
+	 * @param count The count
+	 * @param modifiers The modifiers as a var arg
+	 *
+	 * @return A {@link AdvancedShapedRecipeBuilder}
+	 *
+	 * @implNote Uses the default {@value CraftingRecipeBuilder#DEFAULT_DIRECTORY} directory
+	 */
 	@CheckReturnValue
 	@Contract("_, _, _ -> new")
 	public static AdvancedShapedRecipeBuilder shaped(final ItemLike result, final int count, final ItemStackModifier... modifiers) {
-		return shaped(DEFAULT_DIRECTORY, ItemStackProvider.of(new ItemStack(result, count), modifiers));
+		return shaped(CraftingRecipeBuilder.DEFAULT_DIRECTORY, ItemStackProvider.of(new ItemStack(result, count), modifiers));
 	}
 
+	/**
+	 * A helper factory
+	 *
+	 * @param directory The directory
+	 * @param result The result
+	 *
+	 * @return A {@link AdvancedShapedRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _ -> new")
 	public static AdvancedShapedRecipeBuilder shaped(final String directory, final ItemStackProvider result) {
 		return new AdvancedShapedRecipeBuilder(directory, result);
 	}
 
+	/**
+	 * A helper factory
+	 *
+	 * @param result The result
+	 * @param count The count
+	 * @param modifiers The modifiers as a var arg
+	 *
+	 * @return A {@link AdvancedShapelessRecipeBuilder}
+	 *
+	 * @implNote Uses the default {@value CraftingRecipeBuilder#DEFAULT_DIRECTORY} directory
+	 */
 	@CheckReturnValue
 	@Contract("_, _, _ -> new")
 	public static AdvancedShapelessRecipeBuilder shapeless(final ItemLike result, final int count, final ItemStackModifier... modifiers) {
-		return shapeless(DEFAULT_DIRECTORY, ItemStackProvider.of(new ItemStack(result, count), modifiers));
+		return shapeless(CraftingRecipeBuilder.DEFAULT_DIRECTORY, ItemStackProvider.of(new ItemStack(result, count), modifiers));
 	}
 
+	/**
+	 * A helper factory
+	 *
+	 * @param directory The directory
+	 * @param result The result
+	 *
+	 * @return A {@link AdvancedShapelessRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _ -> new")
 	public static AdvancedShapelessRecipeBuilder shapeless(final String directory, final ItemStackProvider result) {
@@ -85,7 +135,11 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 	}
 
 	/**
+	 * Adds a {@link ItemStackModifier} for the remainder
+	 *
 	 * @param stackModifier An {@link ItemStackModifier} for the remainder
+	 *
+	 * @return The builder object
 	 */
 	@CanIgnoreReturnValue
 	public B remainder(final ItemStackModifier stackModifier) {
@@ -114,16 +168,26 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 		return advancement;
 	}
 
+	/**
+	 * Helper to easily get the self object in a type safe way
+	 *
+	 * @return The self object
+	 */
 	protected abstract B self();
 
 	/**
-	 * Adds {@link DamageCraftingRemainderModifier} when set
+	 * Helper to add a {@link DamageCraftingRemainderModifier} remainder
+	 *
+	 * @return The builder object
 	 */
 	@CanIgnoreReturnValue
 	public B damageInputs() {
 		return remainder(DamageCraftingRemainderModifier.INSTANCE);
 	}
 
+	/**
+	 * A recipe builder for tfc {@link AdvancedShapedRecipe}s
+	 */
 	@ToString
 	@CanIgnoreReturnValue
 	public static final class AdvancedShapedRecipeBuilder extends AdvancedCraftingRecipeBuilder<AdvancedShapedRecipeBuilder> {
@@ -145,6 +209,8 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 		 * @param tag The tag
 		 * @param row The row index of the input item
 		 * @param column The column index of the input item
+		 *
+		 * @return The builder
 		 */
 		public AdvancedShapedRecipeBuilder inputItem(final Character symbol, final TagKey<Item> tag, final int row, final int column) {
 			return inputItem(symbol, Ingredient.of(tag), row, column);
@@ -157,6 +223,8 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 		 * @param item The item
 		 * @param row The row index of the input item
 		 * @param column The column index of the input item
+		 *
+		 * @return The builder
 		 */
 		public AdvancedShapedRecipeBuilder inputItem(final Character symbol, final ItemLike item, final int row, final int column) {
 			return inputItem(symbol, Ingredient.of(item), row, column);
@@ -169,6 +237,8 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 		 * @param ingredient The ingredient
 		 * @param row The row index of the input item
 		 * @param column The column index of the input item
+		 *
+		 * @return The builder
 		 */
 		public AdvancedShapedRecipeBuilder inputItem(final Character symbol, final Ingredient ingredient, final int row, final int column) {
 			inputRow = row;
@@ -187,6 +257,13 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 			return this;
 		}
 
+		/**
+		 * If this recipe should show a notification on unlock
+		 *
+		 * @param showNotification If this recipe should show a notification on unlock
+		 *
+		 * @return The builder
+		 */
 		public AdvancedShapedRecipeBuilder showNotification(final boolean showNotification) {
 			this.showNotification = showNotification;
 			return this;
@@ -200,6 +277,9 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 		}
 	}
 
+	/**
+	 * A recipe builder for tfc {@link AdvancedShapelessRecipe}s
+	 */
 	@ToString
 	@CanIgnoreReturnValue
 	public static final class AdvancedShapelessRecipeBuilder extends AdvancedCraftingRecipeBuilder<AdvancedShapelessRecipeBuilder> {
@@ -212,6 +292,14 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 			super(folderName, result);
 		}
 
+		/**
+		 * Set the primary ingredient
+		 *
+		 * @param primaryIngredient The primary ingredient
+		 *
+		 * @return This
+		 */
+		@Contract("_ -> this")
 		public AdvancedShapelessRecipeBuilder primaryIngredient(final Ingredient primaryIngredient) {
 			this.primaryIngredient = primaryIngredient;
 			return this;
@@ -219,40 +307,79 @@ public abstract sealed class AdvancedCraftingRecipeBuilder<B extends AdvancedCra
 
 		/**
 		 * Adds an ingredient that can be any item in the given tag.
+		 *
+		 * @param tag The tag
+		 *
+		 * @return This
 		 */
+		@Contract("_ -> this")
 		public AdvancedShapelessRecipeBuilder requires(final TagKey<Item> tag) {
 			return requires(Ingredient.of(tag));
 		}
 
 		/**
-		 * Adds an ingredient of the given item.
+		 * Adds the given tag as an ingredient multiple times.
+		 *
+		 * @param tag The item tag
+		 * @param quantity The quantity required
+		 *
+		 * @return This
 		 */
+		@Contract("_, _ -> this")
+		public AdvancedShapelessRecipeBuilder requires(final TagKey<Item> tag, final int quantity) {
+			return requires(Ingredient.of(tag), quantity);
+		}
+
+		/**
+		 * Adds an ingredient of the given item.
+		 *
+		 * @param item The item
+		 *
+		 * @return This
+		 */
+		@Contract("_ -> this")
 		public AdvancedShapelessRecipeBuilder requires(final ItemLike item) {
 			return requires(Ingredient.of(item));
 		}
 
 		/**
-		 * Adds the given ingredient multiple times.
+		 * Adds the given item as an ingredient multiple times.
+		 *
+		 * @param item The item
+		 * @param quantity The quantity required
+		 *
+		 * @return This
 		 */
+		@Contract("_, _ -> this")
 		public AdvancedShapelessRecipeBuilder requires(final ItemLike item, final int quantity) {
-			for (int i = 0; i < quantity; ++i) requires(item);
+			return requires(Ingredient.of(item), quantity);
+		}
+
+		/**
+		 * Adds an ingredient multiple times.
+		 *
+		 * @param ingredient The ingredient
+		 * @param quantity The quantity required
+		 *
+		 * @return This
+		 */
+		@Contract("_, _ -> this")
+		public AdvancedShapelessRecipeBuilder requires(final Ingredient ingredient, final int quantity) {
+			for (int i = 0; i < quantity; ++i) requires(ingredient);
+
 			return this;
 		}
 
 		/**
 		 * Adds an ingredient.
+		 *
+		 * @param ingredient The ingredient to require
+		 *
+		 * @return This
 		 */
+		@Contract("_ -> this")
 		public AdvancedShapelessRecipeBuilder requires(final Ingredient ingredient) {
 			ingredients.add(ingredient);
-			return this;
-		}
-
-		/**
-		 * Adds an ingredient multiple times.
-		 */
-		public AdvancedShapelessRecipeBuilder requires(final Ingredient ingredient, final int quantity) {
-			for (int i = 0; i < quantity; ++i) requires(ingredient);
-
 			return this;
 		}
 

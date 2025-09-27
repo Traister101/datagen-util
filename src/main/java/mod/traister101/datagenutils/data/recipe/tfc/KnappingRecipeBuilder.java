@@ -29,7 +29,7 @@ public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
 
 	public KnappingRecipeBuilder(final String directory, final ResourceLocation type, final ItemStack result) {
 		super(directory);
-		this.knappingType = KnappingType.MANAGER.getCheckedReference(type);
+		this.knappingType = KnappingType.MANAGER.getReference(type);
 		this.result = result;
 	}
 
@@ -95,29 +95,36 @@ public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
 		return new KnappingRecipe(knappingType, KnappingPattern.from(defaultOn, pattern.toArray(String[]::new)), ingredient, result);
 	}
 
-	@CanIgnoreReturnValue
-	public KnappingRecipeBuilder defaultOff() {
-		defaultOn = false;
-		return this;
-	}
-
+	/**
+	 * Sets non encoded squares to be enabled. Most TFC knapping recipes use this, though clay knapping is a good example of it not being used
+	 */
 	@CanIgnoreReturnValue
 	public KnappingRecipeBuilder defaultOn() {
 		defaultOn = true;
 		return this;
 	}
 
+	/**
+	 * Adds multiple rows to the pattern for this recipe.
+	 *
+	 * @param rows The recipe pattern as a list of rows
+	 */
 	@CanIgnoreReturnValue
 	public KnappingRecipeBuilder pattern(final String... rows) {
 		if (rows.length == KnappingPattern.MAX_HEIGHT) {
 			throw new IllegalArgumentException("Too many rows:" + rows.length + " Max is " + KnappingPattern.MAX_HEIGHT);
 		}
-		Arrays.stream(rows).forEach(this::pattern);
+		Arrays.stream(rows).forEach(this::row);
 		return this;
 	}
 
+	/**
+	 * Adds a new row to the pattern for this recipe.
+	 *
+	 * @param row A single row for the recipe pattern
+	 */
 	@CanIgnoreReturnValue
-	public KnappingRecipeBuilder pattern(final String row) {
+	public KnappingRecipeBuilder row(final String row) {
 		if (row.length() == KnappingPattern.MAX_WIDTH) {
 			throw new IllegalArgumentException("Row:" + row.length() + " is too long. Max is " + KnappingPattern.MAX_WIDTH);
 		}
@@ -128,6 +135,9 @@ public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
 		return this;
 	}
 
+	/**
+	 * @param ingredient The ingredient to more specifically match the held knapping item
+	 */
 	@CanIgnoreReturnValue
 	public KnappingRecipeBuilder ingredient(final Ingredient ingredient) {
 		this.ingredient = Optional.of(ingredient);

@@ -14,6 +14,8 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Copy and paste of TFC's DataManagerProvider that isn't currently shipped in the mod
+ *
+ * @param <T> The data type being managed by a {@link DataManager}
  */
 public abstract class DataManagerProvider<T> implements DataProvider {
 

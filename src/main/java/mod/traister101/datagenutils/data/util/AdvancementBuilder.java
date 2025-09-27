@@ -6,7 +6,7 @@ import net.minecraft.advancements.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
@@ -91,24 +91,5 @@ public final class AdvancementBuilder {
 	 */
 	public AdvancementHolder save(final AdvancementOutput output, final String id) {
 		return save(output, ResourceLocation.parse(id));
-	}
-
-	@Value
-	@Builder
-	public static class SimpleDisplayInfo {
-
-		ItemStack icon;
-		@Nullable
-		@Getter(AccessLevel.NONE)
-		ResourceLocation background;
-		AdvancementType type;
-		boolean showToast;
-		boolean announceChat;
-		boolean hidden;
-
-		private DisplayInfo toInfo(final LanguageTranslation title, final LanguageTranslation description) {
-			return new DisplayInfo(icon, title.component(), description.component(), Optional.ofNullable(background), type, showToast, announceChat,
-					hidden);
-		}
 	}
 }

@@ -33,6 +33,8 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	private final ExtraLanguageProvider[] extraLanguageProviders;
 
 	/**
+	 * The constructor
+	 *
 	 * @param output The pack output
 	 * @param modid The mod id
 	 * @param locale The locale such as 'en_us'
@@ -72,10 +74,17 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	}
 
 	/**
+	 * Returns a stream of the known registry contents commonly Items, Blocks and Entities
+	 *
 	 * @return A stream of known registry contents
 	 */
 	protected abstract Stream<KnownRegistryContents<?>> knownRegistryContents();
 
+	/**
+	 * Add a language translation
+	 *
+	 * @param languageTranslation The language translation
+	 */
 	public final void add(final LanguageTranslation languageTranslation) {
 		add(languageTranslation.key(), languageTranslation.translation());
 	}
@@ -111,11 +120,15 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 
 		/**
 		 * A stream of extra translations
+		 *
+		 * @return A stream of extra translations
 		 */
 		Stream<LanguageTranslation> extraTranslations();
 	}
 
 	/**
+	 * A simple object that references known registry objects
+	 *
 	 * @param <T> The object type
 	 */
 	@Value
@@ -140,9 +153,13 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 		Stream<T> knownObjects;
 
 		/**
+		 * Helper factory
+		 *
 		 * @param register A deferred register of the known objects
 		 * @param keyFunction The lang key function
 		 * @param <T> The object type
+		 *
+		 * @return The {@link KnownRegistryContents} for the registry
 		 */
 		@Contract("_, _ -> new")
 		public static <T> KnownRegistryContents<DeferredHolder<T, ? extends T>> of(final DeferredRegister<T> register,
@@ -152,7 +169,11 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 		}
 
 		/**
+		 * Helper factory for block registries
+		 *
 		 * @param blockRegister A deferred register of the known blocks
+		 *
+		 * @return The {@link KnownRegistryContents} for the registry
 		 */
 		@Contract("_ -> new")
 		public static KnownRegistryContents<DeferredHolder<Block, ? extends Block>> block(final DeferredRegister<Block> blockRegister) {
@@ -160,7 +181,11 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 		}
 
 		/**
+		 * Helper factory for item registries
+		 *
 		 * @param itemRegister A deferred register of the known items
+		 *
+		 * @return The {@link KnownRegistryContents} for the registry
 		 */
 		@Contract("_ -> new")
 		public static KnownRegistryContents<DeferredHolder<Item, ? extends Item>> item(final DeferredRegister<Item> itemRegister) {
@@ -168,7 +193,11 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 		}
 
 		/**
+		 * Helper factory for effect registries
+		 *
 		 * @param effectRegister A deferred register of the known effects
+		 *
+		 * @return The {@link KnownRegistryContents} for the registry
 		 */
 		@Contract("_ -> new")
 		public static KnownRegistryContents<DeferredHolder<MobEffect, ? extends MobEffect>> effect(final DeferredRegister<MobEffect> effectRegister) {
@@ -176,7 +205,11 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 		}
 
 		/**
+		 * Helper factory for entity type registries
+		 *
 		 * @param entityTypeRegister A deferred register of the known entity types
+		 *
+		 * @return The {@link KnownRegistryContents} for the registry
 		 */
 		@Contract("_ -> new")
 		public static KnownRegistryContents<DeferredHolder<EntityType<?>, ? extends EntityType<?>>> entity(

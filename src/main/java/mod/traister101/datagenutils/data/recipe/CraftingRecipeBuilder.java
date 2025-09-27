@@ -22,18 +22,39 @@ import java.util.*;
 /**
  * An enhanced crafting recipe builder allowing custom directory names. Also contains all factory functions for the related builders
  * like {@link #shaped(String, CraftingBookCategory, ItemLike, int)} and {@link #shapeless(String, CraftingBookCategory, ItemLike, int)}
+ *
+ * @param <B> The builder type. Either {@link ShapedCraftingRecipeBuilder} or {@link ShapelessCraftingRecipeBuilder}
  */
 @SuppressWarnings({"UnusedReturnValue", "unused"})
 public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuilder<B>> extends SimpleRecipeBuilder implements RecipeBuilder {
 
+	/**
+	 * The default crafting recipe directory name
+	 */
 	public static final String DEFAULT_DIRECTORY = "crafting";
 
+	/**
+	 * The result stack
+	 */
 	protected final ItemStack result;
+	/**
+	 * The book category, usually {@link CraftingBookCategory#MISC}
+	 */
 	protected final CraftingBookCategory craftingBookCategory;
 	private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
+	/**
+	 * The recipe group, typically not used by mods
+	 */
 	@Nullable
 	protected String group;
 
+	/**
+	 * The constructor
+	 *
+	 * @param directory The directory
+	 * @param craftingBookCategory The crafting book category
+	 * @param result The result stack
+	 */
 	protected CraftingRecipeBuilder(final String directory, final CraftingBookCategory craftingBookCategory, final ItemStack result) {
 		super(directory);
 		this.result = result;
@@ -147,6 +168,9 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 
 	protected abstract B self();
 
+	/**
+	 * A recipe builder for vanilla {@link ShapedRecipe}s
+	 */
 	@CanIgnoreReturnValue
 	public static final class ShapedCraftingRecipeBuilder extends CraftingRecipeBuilder<ShapedCraftingRecipeBuilder> {
 
@@ -180,6 +204,9 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		}
 	}
 
+	/**
+	 * A recipe builder for vanilla {@link ShapelessRecipe}s
+	 */
 	@CanIgnoreReturnValue
 	public static final class ShapelessCraftingRecipeBuilder extends CraftingRecipeBuilder<ShapelessCraftingRecipeBuilder> {
 
@@ -191,40 +218,79 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 
 		/**
 		 * Adds an ingredient that can be any item in the given tag.
+		 *
+		 * @param tag The tag
+		 *
+		 * @return This
 		 */
+		@Contract("_ -> this")
 		public ShapelessCraftingRecipeBuilder requires(final TagKey<Item> tag) {
 			return requires(Ingredient.of(tag));
 		}
 
 		/**
-		 * Adds an ingredient of the given item.
+		 * Adds the given tag as an ingredient multiple times.
+		 *
+		 * @param tag The item tag
+		 * @param quantity The quantity required
+		 *
+		 * @return This
 		 */
+		@Contract("_, _ -> this")
+		public ShapelessCraftingRecipeBuilder requires(final TagKey<Item> tag, final int quantity) {
+			return requires(Ingredient.of(tag), quantity);
+		}
+
+		/**
+		 * Adds an ingredient of the given item.
+		 *
+		 * @param item The item
+		 *
+		 * @return This
+		 */
+		@Contract("_ -> this")
 		public ShapelessCraftingRecipeBuilder requires(final ItemLike item) {
 			return requires(Ingredient.of(item));
 		}
 
 		/**
 		 * Adds the given item as an ingredient multiple times.
+		 *
+		 * @param item The item
+		 * @param quantity The quantity required
+		 *
+		 * @return This
 		 */
+		@Contract("_, _ -> this")
 		public ShapelessCraftingRecipeBuilder requires(final ItemLike item, final int quantity) {
-			for (int i = 0; i < quantity; ++i) requires(item);
+			return requires(Ingredient.of(item), quantity);
+		}
+
+		/**
+		 * Adds an ingredient multiple times.
+		 *
+		 * @param ingredient The ingredient
+		 * @param quantity The quantity required
+		 *
+		 * @return This
+		 */
+		@Contract("_, _ -> this")
+		public ShapelessCraftingRecipeBuilder requires(final Ingredient ingredient, final int quantity) {
+			for (int i = 0; i < quantity; ++i) requires(ingredient);
+
 			return this;
 		}
 
 		/**
 		 * Adds an ingredient.
+		 *
+		 * @param ingredient The ingredient to require
+		 *
+		 * @return This
 		 */
+		@Contract("_ -> this")
 		public ShapelessCraftingRecipeBuilder requires(final Ingredient ingredient) {
 			ingredients.add(ingredient);
-			return this;
-		}
-
-		/**
-		 * Adds an ingredient multiple times.
-		 */
-		public ShapelessCraftingRecipeBuilder requires(final Ingredient ingredient, final int quantity) {
-			for (int i = 0; i < quantity; ++i) requires(ingredient);
-
 			return this;
 		}
 
