@@ -76,7 +76,7 @@ public final class EnhancedAdvancementProvider implements ExtraLanguageProvider,
 					if (!set.add(advancement.id())) throw new IllegalStateException("Duplicate advancement " + advancement.id());
 
 					advancement.value().parent().ifPresent(parent -> {
-						if (!existingFileHelper.exists(advancement.id(), ADVANCEMENT)) {
+						if (!existingFileHelper.exists(parent, ADVANCEMENT)) {
 							throw new IllegalStateException(
 									"The parent: '%s' of advancement '%s', has not been saved yet!".formatted(parent, advancement.id()));
 						}
