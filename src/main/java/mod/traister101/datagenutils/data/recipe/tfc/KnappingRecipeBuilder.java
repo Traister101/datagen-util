@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 
+import org.jetbrains.annotations.Contract;
 import java.util.*;
 
 public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
@@ -108,10 +109,13 @@ public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
 	 * Adds multiple rows to the pattern for this recipe.
 	 *
 	 * @param rows The recipe pattern as a list of rows
+	 *
+	 * @return This
 	 */
 	@CanIgnoreReturnValue
+	@Contract(value = "_ -> this", mutates = "this")
 	public KnappingRecipeBuilder pattern(final String... rows) {
-		if (rows.length == KnappingPattern.MAX_HEIGHT) {
+		if (rows.length > KnappingPattern.MAX_HEIGHT) {
 			throw new IllegalArgumentException("Too many rows:" + rows.length + " Max is " + KnappingPattern.MAX_HEIGHT);
 		}
 		Arrays.stream(rows).forEach(this::row);
@@ -122,10 +126,13 @@ public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
 	 * Adds a new row to the pattern for this recipe.
 	 *
 	 * @param row A single row for the recipe pattern
+	 *
+	 * @return This
 	 */
 	@CanIgnoreReturnValue
+	@Contract(value = "_ -> this", mutates = "this")
 	public KnappingRecipeBuilder row(final String row) {
-		if (row.length() == KnappingPattern.MAX_WIDTH) {
+		if (row.length() > KnappingPattern.MAX_WIDTH) {
 			throw new IllegalArgumentException("Row:" + row.length() + " is too long. Max is " + KnappingPattern.MAX_WIDTH);
 		}
 		if (!pattern.isEmpty() && pattern.getFirst().length() != row.length()) {
@@ -139,6 +146,7 @@ public final class KnappingRecipeBuilder extends SimpleRecipeBuilder {
 	 * @param ingredient The ingredient to more specifically match the held knapping item
 	 */
 	@CanIgnoreReturnValue
+	@Contract(value = "_ -> this", mutates = "this")
 	public KnappingRecipeBuilder ingredient(final Ingredient ingredient) {
 		this.ingredient = Optional.of(ingredient);
 		return this;
