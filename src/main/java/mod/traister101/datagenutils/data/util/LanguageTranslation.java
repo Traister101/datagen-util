@@ -4,6 +4,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.extensions.ILevelExtension;
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.*;
@@ -259,6 +260,26 @@ public class LanguageTranslation {
 	@Contract("_ -> new")
 	public static LanguageTranslation simpleDimension(final ResourceKey<Level> dimension) {
 		return of(dimension.location().toLanguageKey(ILevelExtension.TRANSLATION_PREFIX), langify(dimension.location().getPath()));
+	}
+
+	/**
+	 * @param jukeboxSong The jukebox song key
+	 * @param name The jukebox song name
+	 */
+	@Contract("_, _ -> new")
+	public static LanguageTranslation jukeboxSong(final ResourceKey<JukeboxSong> jukeboxSong, final String name) {
+		return of(Util.makeDescriptionId("jukebox_song", jukeboxSong.location()), name);
+	}
+
+	/**
+	 * Uses {@link #langify(String)} to create a name from the registry name
+	 *
+	 * @param jukeboxSong The jukebox song key
+	 */
+	@Contract("_ -> new")
+	public static LanguageTranslation simpleJukeboxSong(final ResourceKey<JukeboxSong> jukeboxSong) {
+		final var registryName = jukeboxSong.location();
+		return of(Util.makeDescriptionId("jukebox_song", registryName), langify(registryName.getPath()));
 	}
 
 	/**
