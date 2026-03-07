@@ -83,7 +83,7 @@ public class LanguageTranslation {
 	 * @param name The block name
 	 */
 	@Contract("_, _ -> new")
-	public static LanguageTranslation block(final Supplier<Block> block, final String name) {
+	public static LanguageTranslation block(final Supplier<? extends Block> block, final String name) {
 		return block(block.get(), name);
 	}
 
@@ -93,7 +93,7 @@ public class LanguageTranslation {
 	 * @param block The block
 	 */
 	@Contract("_ -> new")
-	public static LanguageTranslation simpleBlock(final Supplier<Block> block) {
+	public static LanguageTranslation simpleBlock(final Supplier<? extends Block> block) {
 		return simpleBlock(block.get());
 	}
 
@@ -171,7 +171,7 @@ public class LanguageTranslation {
 	 * @param name The effect name
 	 */
 	@Contract("_, _ -> new")
-	public static LanguageTranslation effect(final Supplier<MobEffect> effect, final String name) {
+	public static LanguageTranslation effect(final Supplier<? extends MobEffect> effect, final String name) {
 		return effect(effect.get(), name);
 	}
 
@@ -181,7 +181,7 @@ public class LanguageTranslation {
 	 * @param effect The effect
 	 */
 	@Contract("_ -> new")
-	public static LanguageTranslation simpleEffect(final Supplier<MobEffect> effect) {
+	public static LanguageTranslation simpleEffect(final Supplier<? extends MobEffect> effect) {
 		return simpleEffect(effect.get());
 	}
 
@@ -209,7 +209,7 @@ public class LanguageTranslation {
 	 * @param name The entity name
 	 */
 	@Contract("_, _ -> new")
-	public static LanguageTranslation entity(final Supplier<EntityType<?>> entityType, final String name) {
+	public static LanguageTranslation entity(final Supplier<? extends EntityType<?>> entityType, final String name) {
 		return entity(entityType.get(), name);
 	}
 
@@ -219,7 +219,7 @@ public class LanguageTranslation {
 	 * @param entityType The entity type
 	 */
 	@Contract("_ -> new")
-	public static LanguageTranslation simpleEntity(final Supplier<EntityType<?>> entityType) {
+	public static LanguageTranslation simpleEntity(final Supplier<? extends EntityType<?>> entityType) {
 		return simpleEntity(entityType.get());
 	}
 
