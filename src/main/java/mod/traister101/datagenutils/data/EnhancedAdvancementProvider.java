@@ -1,6 +1,6 @@
 package mod.traister101.datagenutils.data;
 
-import mod.traister101.datagenutils.data.EnhancedLanguageProvider.ExtraLanguageProvider;
+import mod.traister101.datagenutils.data.language.ExtraLanguageProvider;
 import mod.traister101.datagenutils.data.util.*;
 import net.neoforged.neoforge.common.conditions.*;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;

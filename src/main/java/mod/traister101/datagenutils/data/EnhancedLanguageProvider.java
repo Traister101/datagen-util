@@ -1,71 +1,109 @@
 package mod.traister101.datagenutils.data;
 
 import com.google.gson.JsonObject;
-import mod.traister101.datagenutils.data.util.LanguageTranslation;
+import mod.traister101.datagenutils.data.language.*;
+import mod.traister101.datagenutils.data.util.*;
 import net.neoforged.neoforge.common.data.LanguageProvider;
-import net.neoforged.neoforge.registries.*;
 
+import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.*;
 import net.minecraft.data.PackOutput.Target;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 
-import lombok.*;
-import org.jetbrains.annotations.Contract;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
  * Smarter {@link LanguageProvider} that checks to make sure registered objects have lang
+ * <pre>{@code
+ *  // In datagen entry point
+ *  EnhancedAdvancementProvider myModAdvancements = generator.addProvider(event.includeServer(), MyModAdvancements.create(packOutput, lookupProvider, existingFileHelper));
+ *
+ *  EnhancedLanguageProvider myModLanguage = generator.addProvider(event.includeClient(), MyModLanguage.create(packOutput, lookupProvider));
+ *  // Add the advancement provider as an extra language provider
+ *  myModLanguage.extraLanguage(myModAdvancements);
+ *
+ *  // Example impl of this class
+ *  public final class MyModLanguage extends EnhancedLanguageProvider {
+ *      public MyModLanguage(PackOutput output, CompletableFuture<Provider> registries) {
+ *          super(output, registries, MODID, "en_us", List.of(<sub providers>));
+ *      }
+ *
+ *      @Override
+ *      protected void addTranslations() {
+ *      // Translations unhandled by sub providers.
+ *      // If using sub providers these should be plain translations.
+ *      add("example.key.thing", "Example Thing");
+ *      add(LanguageTranslation.of("example.key.other_thing", "Other Example Thing"));
+ *      }
+ *  }
+ * }</pre>
  */
 public abstract class EnhancedLanguageProvider implements DataProvider {
 
-	private final Map<String, String> data = new TreeMap<>();
+	/**
+	 * The mod id
+	 */
+	protected final String modid;
+	private final Set<LanguageTranslation> data = new TreeSet<>(Comparator.comparing(LanguageTranslation::key));
 	private final PackOutput output;
-	private final String modid;
 	private final String locale;
-	private final ExtraLanguageProvider[] extraLanguageProviders;
+	private final CompletableFuture<Provider> registries;
+	private final List<EnhancedLanguageSubProvider> subProviders;
+	private final List<ExtraLanguageProvider> extraLanguageProviders = new ArrayList<>();
 
 	/**
 	 * The constructor
 	 *
 	 * @param output The pack output
+	 * @param registries The registries
 	 * @param modid The mod id
 	 * @param locale The locale such as 'en_us'
-	 * @param extraLanguageProviders Var arg extra language providers. <strong>IMPORTANT:</strong> Typically, these must run before the language
-	 * provider see docs for the {@link ExtraLanguageProvider} in question
+	 * @param subProviders All the sub providers. Many useful sub providers exist in {@link mod.traister101.datagenutils.data.language}
 	 */
-	public EnhancedLanguageProvider(final PackOutput output, final String modid, final String locale,
-			final ExtraLanguageProvider... extraLanguageProviders) {
+	protected EnhancedLanguageProvider(final PackOutput output, final CompletableFuture<Provider> registries, final String modid, final String locale,
+			final List<EnhancedLanguageSubProvider> subProviders) {
 		this.output = output;
+		this.registries = registries;
 		this.modid = modid;
 		this.locale = locale;
-		this.extraLanguageProviders = extraLanguageProviders;
+		this.subProviders = subProviders;
+	}
+
+	/**
+	 * @param extraLanguageProviders One or many extra language providers. Notable ones are {@link EnhancedLanguageProvider} and children of
+	 * {@link mod.traister101.datagenutils.data.tags.EnhancedTagsProvider EnhancedTagsProvider}
+	 */
+	@SuppressWarnings("unused")
+	public EnhancedLanguageProvider extraLanguage(final ExtraLanguageProvider... extraLanguageProviders) {
+		this.extraLanguageProviders.addAll(Arrays.asList(extraLanguageProviders));
+		return this;
 	}
 
 	/**
 	 * Add all translations (not already handled via {@link ExtraLanguageProvider})
+	 * If you do not want to use {@link EnhancedLanguageSubProvider}s override {@link #knownObjects(Provider)}
 	 */
 	protected abstract void addTranslations();
 
 	@Override
-	public CompletableFuture<?> run(final CachedOutput cache) {
-		Arrays.stream(extraLanguageProviders).flatMap(ExtraLanguageProvider::extraTranslations).forEach(this::add);
-		addTranslations();
-		knownRegistryContents().forEach(this::validate);
+	public final CompletableFuture<?> run(final CachedOutput cache) {
+		return registries.thenCompose(provider -> {
+			Stream.concat(extraLanguageProviders.stream().flatMap(ExtraLanguageProvider::extraTranslations),
+					subProviders.stream().flatMap(EnhancedLanguageSubProvider::translations)).forEach(this::add);
+			addTranslations();
+			Stream.concat(knownObjects(provider),
+							subProviders.stream().<KnownObjects<?>>map(subProvider -> subProvider.knownObjects(provider)).filter(Objects::nonNull))
+					.forEach(this::validate);
 
-		if (!data.isEmpty()) {
-			final var path = output.getOutputFolder(Target.RESOURCE_PACK).resolve(modid).resolve("lang").resolve(locale + ".json");
-			return save(cache, path);
-		}
+			if (!data.isEmpty()) {
+				final var path = output.getOutputFolder(Target.RESOURCE_PACK).resolve(modid).resolve("lang").resolve(locale + ".json");
+				return CompletableFuture.allOf(save(cache, path));
+			}
 
-		return CompletableFuture.allOf();
+			return CompletableFuture.allOf();
+		});
 	}
 
 	@Override
@@ -74,147 +112,42 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	}
 
 	/**
-	 * Returns a stream of the known registry contents commonly Items, Blocks and Entities
+	 * Returns a stream of the known objects commonly Items, Blocks and Entities though especially any type can be checked
+	 *
+	 * @param provider The registry provider
 	 *
 	 * @return A stream of known registry contents
 	 */
-	protected abstract Stream<KnownRegistryContents<?>> knownRegistryContents();
+	protected Stream<KnownObjects<?>> knownObjects(@SuppressWarnings("unused") final Provider provider) {
+		return Stream.empty();
+	}
 
 	/**
 	 * Add a language translation
 	 *
 	 * @param languageTranslation The language translation
 	 */
-	public final void add(final LanguageTranslation languageTranslation) {
-		add(languageTranslation.key(), languageTranslation.translation());
+	protected final void add(final LanguageTranslation languageTranslation) {
+		if (data.add(languageTranslation)) throw new IllegalArgumentException("Duplicate Language Translation" + languageTranslation);
 	}
 
-	private void add(final String key, final String translation) {
-		if (data.put(key, translation) != null) throw new IllegalStateException("Duplicate translation key " + key);
+	protected final void add(final String key, final String translation) {
+		add(LanguageTranslation.of(key, translation));
 	}
 
-	private <T> void validate(final KnownRegistryContents<T> contents) {
-		final var registryName = contents.registryName;
-		final var keyFunction = contents.keyFunction;
-		final var locationFunction = contents.locationFunction;
-		contents.knownObjects.forEach(t -> validateEntry(registryName, keyFunction.apply(t), locationFunction.apply(t)));
-	}
-
-	private void validateEntry(final ResourceLocation registryName, final String langKey, final ResourceLocation objectName) {
-		if (!data.containsKey(langKey)) {
-			throw new IllegalStateException(String.format(Locale.ROOT, "Missing lang entry for '%s' in '%s'", objectName, registryName));
-		}
+	private <T> void validate(final KnownObjects<T> contents) {
+		contents.knownObjects()
+				.filter(knownObject -> !data.contains(LanguageTranslation.of(knownObject.langKey(), "untranslated")))
+				.forEach(knownObject -> {
+					throw new IllegalStateException(
+							String.format(Locale.ROOT, "Missing lang entry for '%s' in '%s'", knownObject.id(), contents.name()));
+				});
 	}
 
 	private CompletableFuture<?> save(final CachedOutput cache, final Path target) {
 		final var json = new JsonObject();
-		data.forEach(json::addProperty);
+		data.forEach(translation -> json.addProperty(translation.key(), translation.translation()));
 
 		return DataProvider.saveStable(cache, json, target);
-	}
-
-	/**
-	 * Some external provider with extra language such as {@link AdvancementSubProvider}
-	 */
-	public interface ExtraLanguageProvider {
-
-		/**
-		 * A stream of extra translations
-		 *
-		 * @return A stream of extra translations
-		 */
-		Stream<LanguageTranslation> extraTranslations();
-	}
-
-	/**
-	 * A simple object that references known registry objects
-	 *
-	 * @param <T> The object type
-	 */
-	@Value
-	@AllArgsConstructor
-	protected static class KnownRegistryContents<T> {
-
-		/**
-		 * The registry name
-		 */
-		ResourceLocation registryName;
-		/**
-		 * The lang key function
-		 */
-		Function<T, String> keyFunction;
-		/**
-		 * The objects registry name
-		 */
-		Function<T, ResourceLocation> locationFunction;
-		/**
-		 * An iterable of the known objects
-		 */
-		Stream<T> knownObjects;
-
-		/**
-		 * Helper factory
-		 *
-		 * @param register A deferred register of the known objects
-		 * @param keyFunction The lang key function
-		 * @param <T> The object type
-		 *
-		 * @return The {@link KnownRegistryContents} for the registry
-		 */
-		@Contract("_, _ -> new")
-		public static <T> KnownRegistryContents<DeferredHolder<T, ? extends T>> of(final DeferredRegister<T> register,
-				final Function<T, String> keyFunction) {
-			return new KnownRegistryContents<>(register.getRegistryName(), keyFunction.compose(DeferredHolder::get), DeferredHolder::getId,
-					register.getEntries().stream());
-		}
-
-		/**
-		 * Helper factory for block registries
-		 *
-		 * @param blockRegister A deferred register of the known blocks
-		 *
-		 * @return The {@link KnownRegistryContents} for the registry
-		 */
-		@Contract("_ -> new")
-		public static KnownRegistryContents<DeferredHolder<Block, ? extends Block>> block(final DeferredRegister<Block> blockRegister) {
-			return of(blockRegister, Block::getDescriptionId);
-		}
-
-		/**
-		 * Helper factory for item registries
-		 *
-		 * @param itemRegister A deferred register of the known items
-		 *
-		 * @return The {@link KnownRegistryContents} for the registry
-		 */
-		@Contract("_ -> new")
-		public static KnownRegistryContents<DeferredHolder<Item, ? extends Item>> item(final DeferredRegister<Item> itemRegister) {
-			return of(itemRegister, Item::getDescriptionId);
-		}
-
-		/**
-		 * Helper factory for effect registries
-		 *
-		 * @param effectRegister A deferred register of the known effects
-		 *
-		 * @return The {@link KnownRegistryContents} for the registry
-		 */
-		@Contract("_ -> new")
-		public static KnownRegistryContents<DeferredHolder<MobEffect, ? extends MobEffect>> effect(final DeferredRegister<MobEffect> effectRegister) {
-			return of(effectRegister, MobEffect::getDescriptionId);
-		}
-
-		/**
-		 * Helper factory for entity type registries
-		 *
-		 * @param entityTypeRegister A deferred register of the known entity types
-		 *
-		 * @return The {@link KnownRegistryContents} for the registry
-		 */
-		@Contract("_ -> new")
-		public static KnownRegistryContents<DeferredHolder<EntityType<?>, ? extends EntityType<?>>> entity(
-				final DeferredRegister<EntityType<?>> entityTypeRegister) {
-			return of(entityTypeRegister, EntityType::getDescriptionId);
-		}
 	}
 }

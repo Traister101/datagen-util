@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
  */
 @Value
 @Getter
+@ToString
 @Accessors(fluent = true)
 public class LanguageTranslation {
 
@@ -84,6 +85,7 @@ public class LanguageTranslation {
 	 * @param name The block name
 	 */
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation block(final Supplier<? extends Block> block, final String name) {
 		return block(block.get(), name);
 	}
@@ -94,6 +96,7 @@ public class LanguageTranslation {
 	 * @param block The block
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleBlock(final Supplier<? extends Block> block) {
 		return simpleBlock(block.get());
 	}
@@ -132,6 +135,7 @@ public class LanguageTranslation {
 	 * @param item The item
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleItem(final ItemLike item) {
 		return simpleItem(item.asItem());
 	}
@@ -143,6 +147,7 @@ public class LanguageTranslation {
 	 * @param name The stack name
 	 */
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation stack(final ItemStack stack, final String name) {
 		return of(stack.getDescriptionId(), name);
 	}
@@ -172,6 +177,7 @@ public class LanguageTranslation {
 	 * @param name The effect name
 	 */
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation effect(final Supplier<? extends MobEffect> effect, final String name) {
 		return effect(effect.get(), name);
 	}
@@ -182,6 +188,7 @@ public class LanguageTranslation {
 	 * @param effect The effect
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleEffect(final Supplier<? extends MobEffect> effect) {
 		return simpleEffect(effect.get());
 	}
@@ -210,6 +217,7 @@ public class LanguageTranslation {
 	 * @param name The entity name
 	 */
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation entity(final Supplier<? extends EntityType<?>> entityType, final String name) {
 		return entity(entityType.get(), name);
 	}
@@ -220,6 +228,7 @@ public class LanguageTranslation {
 	 * @param entityType The entity type
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleEntity(final Supplier<? extends EntityType<?>> entityType) {
 		return simpleEntity(entityType.get());
 	}
@@ -239,6 +248,7 @@ public class LanguageTranslation {
 	 * @param tag The tag
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleTag(final TagKey<?> tag) {
 		return tag(tag, langify(tag.location().getPath()));
 	}
@@ -248,6 +258,7 @@ public class LanguageTranslation {
 	 * @param name The dimension name
 	 */
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation dimension(final ResourceKey<Level> dimension, final String name) {
 		return of(dimension.location().toLanguageKey(ILevelExtension.TRANSLATION_PREFIX), name);
 	}
@@ -258,6 +269,7 @@ public class LanguageTranslation {
 	 * @param dimension Dimension key
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleDimension(final ResourceKey<Level> dimension) {
 		return of(dimension.location().toLanguageKey(ILevelExtension.TRANSLATION_PREFIX), langify(dimension.location().getPath()));
 	}
@@ -267,6 +279,7 @@ public class LanguageTranslation {
 	 * @param name The jukebox song name
 	 */
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation jukeboxSong(final ResourceKey<JukeboxSong> jukeboxSong, final String name) {
 		return of(Util.makeDescriptionId("jukebox_song", jukeboxSong.location()), name);
 	}
@@ -277,6 +290,7 @@ public class LanguageTranslation {
 	 * @param jukeboxSong The jukebox song key
 	 */
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static LanguageTranslation simpleJukeboxSong(final ResourceKey<JukeboxSong> jukeboxSong) {
 		final var registryName = jukeboxSong.location();
 		return of(Util.makeDescriptionId("jukebox_song", registryName), langify(registryName.getPath()));
