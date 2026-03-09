@@ -35,11 +35,10 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
     into(layout.buildDirectory.dir("generated/sources/modMetadata"))
 }
 
-base {
-    archivesName.set("$modId-${libs.versions.minecraft.get()}")
-    version = modVersion
-    group = modGroupId
-}
+version = modVersion
+group = modGroupId
+
+base.archivesName.set("$modId-${libs.versions.minecraft.get()}")
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
