@@ -112,6 +112,8 @@ dependencies {
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 
+    compileOnly(libs.jade)
+
     // TFC!
     compileOnly(libs.tfc)
 }
