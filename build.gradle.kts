@@ -38,7 +38,7 @@ val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata"
 version = modVersion
 group = modGroupId
 
-base.archivesName.set("$modId-${libs.versions.minecraft.get()}")
+base.archivesName.set("Datagen-Utils-${libs.versions.minecraft.get()}")
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -150,6 +150,14 @@ publishing {
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
+            name = "up"
+            url = uri("https://maven.uuid.gg/releases")
+            credentials {
+                username = System.getenv("UP_MAVEN_USER")
+                password = System.getenv("UP_MAVEN_TOKEN")
             }
         }
     }
