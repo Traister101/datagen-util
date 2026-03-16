@@ -48,7 +48,8 @@ public class LanguageTranslation {
 	 * @throws IllegalArgumentException when {@code serializedName} contains a path seperator. This is an error, fix your code
 	 */
 	public static String langify(final String serializedName) throws IllegalArgumentException {
-		if (serializedName.contains("/")) throw new IllegalArgumentException("Only 'flat' serialized names permitted (no path separators '/'). ");
+		if (serializedName.contains("/"))
+			throw new IllegalArgumentException("Only 'flat' serialized names permitted (no path separators '/'). '" + serializedName + "'");
 		return Arrays.stream(serializedName.split("_")).map(StringUtils::capitalize).collect(Collectors.joining(" "));
 	}
 
