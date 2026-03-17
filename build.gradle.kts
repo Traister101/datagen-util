@@ -182,4 +182,9 @@ tasks {
             events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED)
         }
     }
+
+    compileJava {
+        options.encoding = "UTF-8"
+        options.compilerArgs.addAll(arrayOf("-Xlint:all,-processing", "-Werror"))
+    }
 }
