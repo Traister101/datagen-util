@@ -6,12 +6,41 @@ on:
       - 'v*'
 
 jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version_number: "${{ steps.version_number.outputs.result }}"
+      version_type: "${{ steps.version_type.outputs.result }}"
+    steps:
+      - name: Get Version
+        id: version_number
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            let ref = '${{ github.ref }}';
+            return ref.startsWith('refs/tags/v') ? ref.replace('refs/tags/v', '') : 'indev';
+
+      - name: Get Version Type
+        id: version_type
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            let version = '${{ steps.version.outputs.result }}';
+            return version.includes('alpha') ? 'alpha' : (version.includes('beta') ? 'beta' : 'release');
   main:
+    needs: [ version ]
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
       packages: write
+    env:
+      VERSION: ${{ needs.version.outputs.version_number }}
+      VERSION_TYPE: ${{ needs.version.outputs.version_type }}
 
     steps:
       - name: Checkout
