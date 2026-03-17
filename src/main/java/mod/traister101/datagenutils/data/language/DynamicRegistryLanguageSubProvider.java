@@ -24,6 +24,10 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 	private final Function<ResourceLocation, String> keyFunction;
 	private final String modid;
 
+	/**
+	 * @deprecated Extend {@link DynamicRegistryLanguageSubProvider}
+	 */
+	@Deprecated(forRemoval = true)
 	public static <T> DynamicRegistryLanguageSubProvider<T> of(final ResourceKey<Registry<T>> registryKey,
 			final Function<ResourceLocation, String> keyFunction, final String modid, final Consumer<LanguageOutput<ResourceKey<T>>> translations) {
 		return new DynamicRegistryLanguageSubProvider<>(registryKey, keyFunction, modid) {
@@ -34,6 +38,7 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 		};
 	}
 
+	@Deprecated(forRemoval = true)
 	public static DynamicRegistryLanguageSubProvider<JukeboxSong> jukeboxSong(final String modid,
 			final Consumer<LanguageOutput<ResourceKey<JukeboxSong>>> translations) {
 		return of(Registries.JUKEBOX_SONG, songName -> Util.makeDescriptionId("jukebox_song", songName), modid, translations);
