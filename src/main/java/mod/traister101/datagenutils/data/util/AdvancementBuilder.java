@@ -14,6 +14,9 @@ import lombok.*;
 import org.jetbrains.annotations.*;
 import java.util.Optional;
 
+/**
+ * An advancement builder
+ */
 @CanIgnoreReturnValue
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AdvancementBuilder {
@@ -39,6 +42,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The advancement builder
 	 */
+	@CheckReturnValue
 	@Contract("_ -> new")
 	public static AdvancementBuilder recipe(final ResourceLocation recipeId) {
 		return new AdvancementBuilder(ROOT_RECIPE_ADVANCEMENT, false).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId))
@@ -51,7 +55,9 @@ public final class AdvancementBuilder {
 	 *
 	 * @return An advancement builder
 	 */
+	@CheckReturnValue
 	@Contract(" -> new")
+	@SuppressWarnings("unused")
 	public static AdvancementBuilder root() {
 		return new AdvancementBuilder(Optional.empty(), true);
 	}
@@ -63,7 +69,9 @@ public final class AdvancementBuilder {
 	 *
 	 * @return An advancement builder
 	 */
+	@CheckReturnValue
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static AdvancementBuilder child(final AdvancementHolder parent) {
 		return new AdvancementBuilder(Optional.of(parent.id()), true);
 	}
@@ -75,7 +83,9 @@ public final class AdvancementBuilder {
 	 *
 	 * @return An advancement builder
 	 */
+	@CheckReturnValue
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static AdvancementBuilder child(final ResourceLocation parentId) {
 		return new AdvancementBuilder(Optional.of(parentId), true);
 	}
@@ -142,6 +152,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The builder
 	 */
+	@SuppressWarnings("unused")
 	@Contract(value = "_ -> this", mutates = "this")
 	public AdvancementBuilder requirements(final AdvancementRequirements requirements) {
 		this.requirements = requirements;
@@ -155,6 +166,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The builder
 	 */
+	@SuppressWarnings("unused")
 	@Contract(value = "_ -> this", mutates = "this")
 	public AdvancementBuilder display(final SimpleDisplayInfo.SimpleDisplayInfoBuilder displayInfoBuilder) {
 		return display(displayInfoBuilder.build());
@@ -174,6 +186,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The builder
 	 */
+	@SuppressWarnings("unused")
 	@Contract(value = "_, _, _, _, _, _, _, _ -> this", mutates = "this")
 	public AdvancementBuilder display(final ItemStack icon, final String title, final String description, final @Nullable ResourceLocation background,
 			final AdvancementType type, final boolean showToast, final boolean announceChat, final boolean hidden) {
@@ -240,6 +253,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The saved advancement
 	 */
+	@SuppressWarnings("unused")
 	public AdvancementHolder save(final AdvancementOutput output, final String id) {
 		return save(output, ResourceLocation.parse(id));
 	}

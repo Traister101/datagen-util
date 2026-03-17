@@ -71,6 +71,7 @@ public class SimpleDisplayInfo {
 		 * @return The builder
 		 */
 		@Tolerate
+		@SuppressWarnings("unused")
 		public SimpleDisplayInfoBuilder icon(final ItemLike item) {
 			return icon(new ItemStack(item));
 		}
