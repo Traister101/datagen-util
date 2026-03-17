@@ -35,7 +35,9 @@ jobs:
         with:
           arguments: build
 
-      - name: Publish to GitHub Packages
+      - name: Publish
         run: ./gradlew publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UP_MAVEN_USER: ${{ secrets.UP_MAVEN_USER }}
+          UP_MAVEN_TOKEN: ${{ secrets.UP_MAVEN_TOKEN }}
