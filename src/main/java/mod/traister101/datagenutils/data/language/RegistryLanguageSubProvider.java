@@ -48,5 +48,5 @@ public abstract class RegistryLanguageSubProvider<T> implements EnhancedLanguage
 		return translations.stream();
 	}
 
-	protected abstract void addTranslations(LanguageOutput<T> languageOutput);
+	protected abstract void addTranslations(LanguageOutput<T> output);
 }

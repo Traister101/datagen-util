@@ -28,8 +28,8 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 			final Function<ResourceLocation, String> keyFunction, final String modid, final Consumer<LanguageOutput<ResourceKey<T>>> translations) {
 		return new DynamicRegistryLanguageSubProvider<>(registryKey, keyFunction, modid) {
 			@Override
-			protected void addTranslations(final LanguageOutput<ResourceKey<T>> languageOutput) {
-				translations.accept(languageOutput);
+			protected void addTranslations(final LanguageOutput<ResourceKey<T>> output) {
+				translations.accept(output);
 			}
 		};
 	}
@@ -68,5 +68,5 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 		return translations.stream();
 	}
 
-	protected abstract void addTranslations(LanguageOutput<ResourceKey<T>> languageOutput);
+	protected abstract void addTranslations(LanguageOutput<ResourceKey<T>> output);
 }
