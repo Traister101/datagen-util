@@ -111,6 +111,7 @@ dependencies {
     // Lombok because yes
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
+    compileOnly(libs.jetbrains.annotations)
 
     compileOnly(libs.jade)
 

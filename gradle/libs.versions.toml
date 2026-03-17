@@ -12,6 +12,7 @@ minecraft = "1.21.1"
 # The Minecraft version must agree with the Neo version to get a valid artifact
 neforge = "21.1.197"
 lombok = "1.18.36"
+jetbrains-annotations = "26.1.0"
 # IMPORTANT change both this and the tfc file id for things to update correclty
 tfc = "4.0.0-beta"
 tfcFileId = "6993587"
@@ -19,6 +20,7 @@ jadeFileId = "5591256"
 
 [libraries]
 lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
 # Non standard maven
 tfc = { group = "curse.maven", name = "TerraFirmaCraft-302973", version.ref = "tfcFileId" }
 jade = { group = "curse.maven", name = "jade-324717", version.ref = "jadeFileId" }
