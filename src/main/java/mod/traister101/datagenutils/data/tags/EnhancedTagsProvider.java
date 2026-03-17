@@ -234,7 +234,7 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 		 * @param tags The tags to add
 		 */
 		@SafeVarargs
-		@SuppressWarnings("unused")
+		@SuppressWarnings({"unused", "varargs"})
 		public final A addOptional(final TagKey<T>... tags) {
 			Arrays.stream(tags).forEach(this::addOptional);
 			return self();
@@ -282,19 +282,21 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 		}
 
 		@SafeVarargs
+		@SuppressWarnings({"unused", "varargs"})
 		public final A add(final TagKey<T>... tags) {
 			Arrays.stream(tags).forEach(this::add);
 			return self();
 		}
 
 		@SafeVarargs
+		@SuppressWarnings({"unused", "varargs"})
 		public final A add(final ResourceKey<T>... resourceKeys) {
 			Arrays.stream(resourceKeys).forEach(this::add);
 			return self();
 		}
 
 		@SafeVarargs
-		@SuppressWarnings("unused")
+		@SuppressWarnings({"unused", "varargs"})
 		public final A remove(final ResourceKey<T> firstResourceKey, final ResourceKey<T>... resourceKeys) {
 			remove(firstResourceKey);
 			Arrays.stream(resourceKeys).forEach(this::remove);
@@ -307,7 +309,7 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 		}
 
 		@SafeVarargs
-		@SuppressWarnings("unused")
+		@SuppressWarnings({"unused", "varargs"})
 		public final A remove(final TagKey<T> firstTag, final TagKey<T>... tags) {
 			remove(firstTag);
 			Arrays.stream(tags).forEach(this::remove);

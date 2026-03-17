@@ -44,6 +44,7 @@ public abstract class StaticRegistryObjectTagsProvider<T> extends EnhancedTagsPr
 		}
 
 		@SafeVarargs
+		@SuppressWarnings({"unused", "varargs"})
 		public final IntrinsicTagAppender add(final T... entries) {
 			Stream.of(entries).forEach(this::add);
 			return this;
@@ -54,6 +55,7 @@ public abstract class StaticRegistryObjectTagsProvider<T> extends EnhancedTagsPr
 		 *
 		 * @param entry The game object
 		 */
+		@SuppressWarnings("unused")
 		public IntrinsicTagAppender addOptional(final T entry) {
 			return addOptional(keyExtractor.apply(entry));
 		}
@@ -67,6 +69,7 @@ public abstract class StaticRegistryObjectTagsProvider<T> extends EnhancedTagsPr
 		}
 
 		@SafeVarargs
+		@SuppressWarnings({"unused", "varargs"})
 		public final IntrinsicTagAppender remove(final T first, final T... entries) {
 			remove(first);
 			Arrays.stream(entries).forEach(this::remove);

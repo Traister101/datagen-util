@@ -33,6 +33,7 @@ public interface AdvancementOutput {
 	 *
 	 * @return A {@link AdvancementOutput} which automatically applies the given conditions
 	 */
+	@SuppressWarnings("unused")
 	default AdvancementOutput withConditions(final ICondition... conditions) {
 		return new ConditionalAdvancementOutput(this, conditions);
 	}

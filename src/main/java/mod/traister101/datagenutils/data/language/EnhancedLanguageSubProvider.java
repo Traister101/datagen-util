@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import org.jetbrains.annotations.Nullable;
 import java.util.stream.Stream;
 
@@ -19,10 +20,12 @@ public interface EnhancedLanguageSubProvider {
 	 *
 	 * @param provider The registries
 	 */
+	@OverrideOnly
 	@Nullable KnownObjects<?> knownObjects(Provider provider);
 
 	/**
 	 * {@return A stream of translations this provider generates}
 	 */
+	@OverrideOnly
 	Stream<LanguageTranslation> translations();
 }

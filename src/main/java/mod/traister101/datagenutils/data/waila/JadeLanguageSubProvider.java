@@ -52,11 +52,13 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 
 	@SafeVarargs
 	@CheckReturnValue
+	@SuppressWarnings({"unused", "varargs"})
 	protected final <E extends Enum<E>> EnumConfigBuilder<E> enumConfig(final ResourceLocation configName, final E... values) {
 		return new EnumConfigBuilder<>(configName, values);
 	}
 
 	@CheckReturnValue
+	@SuppressWarnings("unused")
 	protected <E extends Enum<E>> EnumConfigBuilder<E> enumConfig(final ResourceLocation configName, final Supplier<E[]> values) {
 		return new EnumConfigBuilder<>(configName, values.get());
 	}
@@ -74,6 +76,7 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 			add(LanguageTranslation.of(makeKey(configId.toLanguageKey()), name));
 		}
 
+		@SuppressWarnings("unused")
 		public void description(final String description) {
 			add(LanguageTranslation.of(makeKey(configId.toLanguageKey()) + DESCRIPTION_POST_FIX, description));
 		}
@@ -88,6 +91,7 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 			this.values = values;
 		}
 
+		@SuppressWarnings("unused")
 		public void defineValues(final BiConsumer<E, EnumValueConfigBuilder> action) {
 			for (final var value : values) {
 				action.accept(value, enumValue(value));
@@ -103,10 +107,12 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 
 			private final E value;
 
+			@SuppressWarnings("unused")
 			public void name(final String name) {
 				add(LanguageTranslation.of(getKey(), name));
 			}
 
+			@SuppressWarnings("unused")
 			public void description(final String description) {
 				add(LanguageTranslation.of(getKey() + DESCRIPTION_POST_FIX, description));
 			}

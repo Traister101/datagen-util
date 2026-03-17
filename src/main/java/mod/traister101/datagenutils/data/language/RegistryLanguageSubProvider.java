@@ -6,6 +6,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.core.HolderLookup.Provider;
 
 import lombok.*;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -48,5 +49,6 @@ public abstract class RegistryLanguageSubProvider<T> implements EnhancedLanguage
 		return translations.stream();
 	}
 
+	@OverrideOnly
 	protected abstract void addTranslations(LanguageOutput<T> output);
 }
