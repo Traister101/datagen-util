@@ -128,7 +128,7 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	 * @param languageTranslation The language translation
 	 */
 	protected final void add(final LanguageTranslation languageTranslation) {
-		if (data.add(languageTranslation)) throw new IllegalArgumentException("Duplicate Language Translation" + languageTranslation);
+		if (!data.add(languageTranslation)) throw new IllegalArgumentException("Duplicate Language Translation" + languageTranslation);
 	}
 
 	protected final void add(final String key, final String translation) {
