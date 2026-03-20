@@ -19,7 +19,6 @@ import java.util.stream.Stream;
  *
  * @param <T> The object type
  */
-@AllArgsConstructor
 public final class KnownObjects<T> {
 
 	/**
@@ -40,6 +39,24 @@ public final class KnownObjects<T> {
 	 * An iterable of the known objects
 	 */
 	private final Collection<T> knownObjects;
+
+	/**
+	 * The constructor, you should generally use one of the two factory functions {@link #fromRegister(DeferredRegister, Function)} and
+	 * {@link #dynamicRegistry(Provider, ResourceKey, Function, String)}
+	 *
+	 * @param name The name of the known objects
+	 * @param keyFunction The function to convert the object to a language key
+	 * @param locationFunction A function to convert from the object to an id
+	 * @param knownObjects A collection of the known objects
+	 */
+	@Contract(pure = true)
+	public KnownObjects(final String name, final Function<T, String> keyFunction, final Function<T, ResourceLocation> locationFunction,
+			final Collection<T> knownObjects) {
+		this.name = name;
+		this.keyFunction = keyFunction;
+		this.locationFunction = locationFunction;
+		this.knownObjects = knownObjects;
+	}
 
 	/**
 	 * Helper factory for a {@link KnownObjects} using a {@link DeferredRegister}
@@ -64,6 +81,7 @@ public final class KnownObjects<T> {
 	 * @param registryKey The registry key
 	 * @param keyFunction The language key function
 	 * @param modid The modid of the owning mod (IE you. dynamic registries contain vanilla objects in datagen)
+	 * @param <T> The object type
 	 *
 	 * @return The {@link KnownObjects} for the dynamic registry
 	 */
@@ -86,12 +104,33 @@ public final class KnownObjects<T> {
 		return knownObjects.stream().map(t -> new KnownObject(keyFunction.apply(t), locationFunction.apply(t)));
 	}
 
+	/**
+	 * A known object
+	 */
 	@Value
 	@ApiStatus.Internal
 	@Accessors(fluent = true)
 	public static class KnownObject {
 
+		/**
+		 * The language key
+		 */
 		String langKey;
+		/**
+		 * The id
+		 */
 		ResourceLocation id;
+
+		/**
+		 * The constructor
+		 *
+		 * @param langKey The language key
+		 * @param id The id
+		 */
+		@Contract(pure = true)
+		public KnownObject(final String langKey, final ResourceLocation id) {
+			this.langKey = langKey;
+			this.id = id;
+		}
 	}
 }

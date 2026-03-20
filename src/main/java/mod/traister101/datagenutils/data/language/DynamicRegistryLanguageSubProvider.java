@@ -9,15 +9,16 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.*;
 import net.minecraft.world.item.JukeboxSong;
 
-import lombok.*;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import java.util.ArrayList;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
  * A language sub provider which handles dynamic registry objects (IE stuff you register via datapack like {@link JukeboxSong}s)
+ *
+ * @param <T> The object type, some dynamic types are translated using their registry name like {@link JukeboxSong}s
  */
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedLanguageSubProvider {
 
 	private final ResourceKey<Registry<T>> registryKey;
@@ -25,9 +26,24 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 	private final String modid;
 
 	/**
+	 * The constructor
+	 *
+	 * @param registryKey The registry key
+	 * @param keyFunction The function to convert an id to a language key
+	 * @param modid The modid
+	 */
+	protected DynamicRegistryLanguageSubProvider(final ResourceKey<Registry<T>> registryKey, final Function<ResourceLocation, String> keyFunction,
+			final String modid) {
+		this.registryKey = registryKey;
+		this.keyFunction = keyFunction;
+		this.modid = modid;
+	}
+
+	/**
 	 * @deprecated Extend {@link DynamicRegistryLanguageSubProvider}
 	 */
-	@Deprecated(forRemoval = true)
+	@SuppressWarnings("doclint")
+	@Deprecated(since = "1.2.1", forRemoval = true)
 	public static <T> DynamicRegistryLanguageSubProvider<T> of(final ResourceKey<Registry<T>> registryKey,
 			final Function<ResourceLocation, String> keyFunction, final String modid, final Consumer<LanguageOutput<ResourceKey<T>>> translations) {
 		return new DynamicRegistryLanguageSubProvider<>(registryKey, keyFunction, modid) {
@@ -38,7 +54,11 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 		};
 	}
 
-	@Deprecated(forRemoval = true)
+	/**
+	 * @deprecated Extend {@link JukeboxSongLanguageProvider}
+	 */
+	@SuppressWarnings("doclint")
+	@Deprecated(since = "1.2.1", forRemoval = true)
 	public static DynamicRegistryLanguageSubProvider<JukeboxSong> jukeboxSong(final String modid,
 			final Consumer<LanguageOutput<ResourceKey<JukeboxSong>>> translations) {
 		return of(Registries.JUKEBOX_SONG, songName -> Util.makeDescriptionId("jukebox_song", songName), modid, translations);
@@ -73,5 +93,11 @@ public abstract class DynamicRegistryLanguageSubProvider<T> implements EnhancedL
 		return translations.stream();
 	}
 
+	/**
+	 * Add the translations
+	 *
+	 * @param output The language output
+	 */
+	@OverrideOnly
 	protected abstract void addTranslations(LanguageOutput<ResourceKey<T>> output);
 }

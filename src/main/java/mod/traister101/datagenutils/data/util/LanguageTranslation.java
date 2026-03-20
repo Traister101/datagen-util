@@ -41,9 +41,23 @@ public class LanguageTranslation {
 	String translation;
 
 	/**
+	 * The constructor
+	 *
+	 * @param key The key
+	 * @param translation The translation
+	 */
+	@Contract(pure = true)
+	public LanguageTranslation(final String key, final String translation) {
+		this.key = key;
+		this.translation = translation;
+	}
+
+	/**
 	 * Takes a string like 'dark_oak' and converts it to 'Dark Oak'.
 	 *
 	 * @param serializedName A serialized name ({@link ResourceLocation#getPath()}) like `dark_oak`
+	 *
+	 * @return A "lang-ified" serialized name, such as 'dark_oak' -> 'Dark Oak'
 	 *
 	 * @throws IllegalArgumentException when {@code serializedName} contains a path seperator. This is an error, fix your code
 	 */
@@ -54,6 +68,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param key The key
 	 * @param translation The translation
 	 */
@@ -63,6 +79,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param block The block
 	 * @param name The block name
 	 */
@@ -75,6 +93,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param block The block
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	public static LanguageTranslation simpleBlock(final Block block) {
@@ -82,6 +102,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param block The block
 	 * @param name The block name
 	 */
@@ -95,6 +117,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param block The block
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -103,6 +127,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param item The item
 	 * @param name The item name
 	 */
@@ -115,6 +141,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param item The item
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	public static LanguageTranslation simpleItem(final Item item) {
@@ -122,6 +150,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param item The item
 	 * @param name The item name
 	 */
@@ -134,6 +164,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param item The item
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -146,6 +178,8 @@ public class LanguageTranslation {
 	 *
 	 * @param stack The Item Stack
 	 * @param name The stack name
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_, _ -> new")
 	@SuppressWarnings("unused")
@@ -154,6 +188,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param effect The effect
 	 * @param name The effect name
 	 */
@@ -166,6 +202,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param effect The effect
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@SuppressWarnings("DataFlowIssue")
 	@Contract("_ -> new")
@@ -174,6 +212,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param effect The effect
 	 * @param name The effect name
 	 */
@@ -187,6 +227,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param effect The effect
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -195,6 +237,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param entityType The entity type
 	 * @param name The entity name
 	 */
@@ -207,6 +251,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param entityType The entity type
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	public static LanguageTranslation simpleEntity(final EntityType<?> entityType) {
@@ -214,6 +260,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param entityType The entity type
 	 * @param name The entity name
 	 */
@@ -227,6 +275,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param entityType The entity type
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -235,6 +285,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param tag The tag
 	 * @param name The tag name, used in recipe viewers
 	 */
@@ -247,6 +299,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param tag The tag
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -255,6 +309,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param dimension Dimension key
 	 * @param name The dimension name
 	 */
@@ -268,6 +324,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param dimension Dimension key
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -276,6 +334,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param jukeboxSong The jukebox song key
 	 * @param name The jukebox song name
 	 */
@@ -289,6 +349,8 @@ public class LanguageTranslation {
 	 * Uses {@link #langify(String)} to create a name from the registry name
 	 *
 	 * @param jukeboxSong The jukebox song key
+	 *
+	 * @return a LanguageTranslation
 	 */
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
@@ -298,6 +360,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param advancementId The advancement id
 	 * @param title The advancement title
 	 */
@@ -307,6 +371,8 @@ public class LanguageTranslation {
 	}
 
 	/**
+	 * {@return a LanguageTranslation}
+	 *
 	 * @param advancementId The advancement id
 	 * @param description The advancement description
 	 */
@@ -316,7 +382,7 @@ public class LanguageTranslation {
 	}
 
 	/**
-	 * @return A translatable component for the key
+	 * {@return A translatable component for the key}
 	 */
 	public Component component() {return Component.translatable(key);}
 }

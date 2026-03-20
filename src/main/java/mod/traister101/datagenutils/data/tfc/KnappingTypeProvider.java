@@ -16,18 +16,42 @@ import lombok.experimental.*;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A provider for TFC's {@link KnappingType}
+ */
 public abstract class KnappingTypeProvider extends DataManagerProvider<KnappingType> {
 
-	protected KnappingTypeProvider(final PackOutput output, final String modid, final CompletableFuture<Provider> lookup) {
-		super(KnappingType.MANAGER, output, modid, lookup);
+	/**
+	 * The constructor
+	 *
+	 * @param output The output
+	 * @param modid The modid
+	 * @param registries The registries
+	 */
+	protected KnappingTypeProvider(final PackOutput output, final String modid, final CompletableFuture<Provider> registries) {
+		super(KnappingType.MANAGER, output, modid, registries);
 	}
 
+	/**
+	 * {@return new KnappingTypeBuilder}
+	 *
+	 * @param ingredient The ingredient
+	 * @param count The count
+	 */
 	protected KnappingTypeBuilder builder(final Ingredient ingredient, final int count) {
 		return new KnappingTypeBuilder(new SizedIngredient(ingredient, count));
 	}
 
-	protected KnappingTypeBuilder builder(final SizedIngredient inputItem) {return new KnappingTypeBuilder(inputItem);}
+	/**
+	 * {@return new KnappingTypeBuilder}
+	 *
+	 * @param inputIngredient The input ingredient
+	 */
+	protected KnappingTypeBuilder builder(final SizedIngredient inputIngredient) {return new KnappingTypeBuilder(inputIngredient);}
 
+	/**
+	 * A builder for TFC's {@link KnappingType}
+	 */
 	protected final class KnappingTypeBuilder extends DataBuilder {
 
 		private final SizedIngredient inputItem;
@@ -72,6 +96,10 @@ public abstract class KnappingTypeProvider extends DataManagerProvider<KnappingT
 
 		/**
 		 * An {@link ItemLike} to use as the icon in recipe viewers
+		 *
+		 * @param item The item to use as an icon
+		 *
+		 * @return {@code this}
 		 */
 		@Tolerate
 		public KnappingTypeBuilder jeiIcon(final ItemLike item) {

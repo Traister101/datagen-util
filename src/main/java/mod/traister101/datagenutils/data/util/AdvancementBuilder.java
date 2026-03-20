@@ -10,7 +10,6 @@ import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-import lombok.*;
 import org.jetbrains.annotations.*;
 import java.util.Optional;
 
@@ -18,7 +17,6 @@ import java.util.Optional;
  * An advancement builder
  */
 @CanIgnoreReturnValue
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AdvancementBuilder {
 
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -34,6 +32,12 @@ public final class AdvancementBuilder {
 	@Nullable
 	private AdvancementRequirements requirements;
 	private AdvancementRequirements.Strategy strategy = AdvancementRequirements.Strategy.AND;
+
+	private AdvancementBuilder(@SuppressWarnings("OptionalUsedAsFieldOrParameterType") final Optional<ResourceLocation> parent,
+			final boolean sendsTelemetryEvent) {
+		this.parent = parent;
+		this.sendsTelemetryEvent = sendsTelemetryEvent;
+	}
 
 	/**
 	 * A helper to create an advancement builder for a recipe

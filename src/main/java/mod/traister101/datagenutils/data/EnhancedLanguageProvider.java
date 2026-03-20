@@ -9,6 +9,7 @@ import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.*;
 import net.minecraft.data.PackOutput.Target;
 
+import org.jetbrains.annotations.Contract;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -72,9 +73,16 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	}
 
 	/**
-	 * @param extraLanguageProviders One or many extra language providers. Notable ones are {@link EnhancedLanguageProvider} and children of
-	 * {@link mod.traister101.datagenutils.data.tags.EnhancedTagsProvider EnhancedTagsProvider}
+	 * Adds extra {@link ExtraLanguageProvider}s to the language provider
+	 *
+	 * @param extraLanguageProviders One or many extra language providers.
+	 *
+	 * @return {@code this}
+	 *
+	 * @see EnhancedAdvancementProvider
+	 * @see mod.traister101.datagenutils.data.tags.EnhancedTagsProvider EnhancedTagsProvider
 	 */
+	@Contract("_ -> this")
 	@SuppressWarnings("unused")
 	public EnhancedLanguageProvider extraLanguage(final ExtraLanguageProvider... extraLanguageProviders) {
 		this.extraLanguageProviders.addAll(Arrays.asList(extraLanguageProviders));
@@ -131,6 +139,14 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 		if (!data.add(languageTranslation)) throw new IllegalArgumentException("Duplicate Language Translation" + languageTranslation);
 	}
 
+	/**
+	 * Adds a language translation
+	 *
+	 * @param key A translation key
+	 * @param translation The translation
+	 *
+	 * @implNote Constructs a {@link LanguageTranslation} and delegates to {@link #add(LanguageTranslation)}
+	 */
 	protected final void add(final String key, final String translation) {
 		add(LanguageTranslation.of(key, translation));
 	}

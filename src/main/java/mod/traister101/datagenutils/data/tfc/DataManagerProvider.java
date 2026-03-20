@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
  *
  * @param <T> The data type being managed by a {@link DataManager}
  */
+@SuppressWarnings("doclint") // Just supress javadoc warnings
 public abstract class DataManagerProvider<T> implements DataProvider {
 
 	protected final CompletableFuture<?> contentDone;

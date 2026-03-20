@@ -5,20 +5,33 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import net.minecraft.core.HolderLookup.Provider;
 
-import lombok.*;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
+import org.jetbrains.annotations.Contract;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
  * A language sub provider which handles static registry objects
+ *
+ * @param <T> The game object type such as {@link net.minecraft.world.item.Item Item} or {@link net.minecraft.world.level.block.Block Block}
  */
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class RegistryLanguageSubProvider<T> implements EnhancedLanguageSubProvider {
 
 	private final DeferredRegister<T> register;
 	private final Function<T, String> keyFunction;
+
+	/**
+	 * The constructor
+	 *
+	 * @param register The register
+	 * @param keyFunction A function to convert the registry object into a language key
+	 */
+	@Contract(pure = true)
+	protected RegistryLanguageSubProvider(final DeferredRegister<T> register, final Function<T, String> keyFunction) {
+		this.register = register;
+		this.keyFunction = keyFunction;
+	}
 
 	@Override
 	public KnownObjects<?> knownObjects(final Provider provider) {
@@ -49,6 +62,11 @@ public abstract class RegistryLanguageSubProvider<T> implements EnhancedLanguage
 		return translations.stream();
 	}
 
+	/**
+	 * Add translations
+	 *
+	 * @param output The language output
+	 */
 	@OverrideOnly
 	protected abstract void addTranslations(LanguageOutput<T> output);
 }

@@ -6,6 +6,9 @@ import net.dries007.tfc.util.data.FluidHeat;
 
 public final class TFCFluidHeat {
 
+	/**
+	 * TFC's heat capacity modifier
+	 */
 	public static final float HEAT_CAPACITY = 0.003F;
 	public static final FluidHeat BISMUTH = of(Metal.BISMUTH, 0.14F, 270);
 	public static final FluidHeat BISMUTH_BRONZE = of(Metal.BISMUTH_BRONZE, 0.35F, 985);

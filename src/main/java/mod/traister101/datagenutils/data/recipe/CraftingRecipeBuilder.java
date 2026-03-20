@@ -23,7 +23,7 @@ import java.util.*;
  *
  * @param <B> The builder type. Either {@link ShapedCraftingRecipeBuilder} or {@link ShapelessCraftingRecipeBuilder}
  */
-@SuppressWarnings({"UnusedReturnValue", "unused"})
+@CanIgnoreReturnValue
 public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuilder<B>> extends SimpleRecipeBuilder implements RecipeBuilder {
 
 	/**
@@ -49,7 +49,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 	/**
 	 * The constructor
 	 *
-	 * @param directory The directory
+	 * @param directory The directory, can be empty to ignore
 	 * @param craftingBookCategory The crafting book category
 	 * @param result The result stack
 	 */
@@ -59,24 +59,59 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		this.craftingBookCategory = craftingBookCategory;
 	}
 
+	/**
+	 * Helper factory for a {@link ShapelessCraftingRecipeBuilder}
+	 *
+	 * @param result The result item
+	 *
+	 * @return a new {@link ShapelessCraftingRecipeBuilder} using {@value DEFAULT_DIRECTORY}
+	 */
 	@CheckReturnValue
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static ShapelessCraftingRecipeBuilder shapeless(final ItemLike result) {
 		return shapeless(DEFAULT_DIRECTORY, result);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapelessCraftingRecipeBuilder}
+	 *
+	 * @param result The result item
+	 * @param count The result item count
+	 *
+	 * @return a new {@link ShapelessCraftingRecipeBuilder} using {@value DEFAULT_DIRECTORY}
+	 */
 	@CheckReturnValue
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static ShapelessCraftingRecipeBuilder shapeless(final ItemLike result, final int count) {
 		return shapeless(DEFAULT_DIRECTORY, CraftingBookCategory.MISC, result, count);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapelessCraftingRecipeBuilder}
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 * @param result The result item
+	 *
+	 * @return a new {@link ShapelessCraftingRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _ -> new")
 	public static ShapelessCraftingRecipeBuilder shapeless(final String directory, final ItemLike result) {
 		return shapeless(directory, CraftingBookCategory.MISC, result, 1);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapelessCraftingRecipeBuilder}
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 * @param craftingBookCategory The crafting book category
+	 * @param result The result item
+	 * @param count The result item count
+	 *
+	 * @return a new {@link ShapelessCraftingRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _, _, _ -> new")
 	public static ShapelessCraftingRecipeBuilder shapeless(final String directory, final CraftingBookCategory craftingBookCategory,
@@ -84,6 +119,15 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		return shapeless(directory, craftingBookCategory, new ItemStack(result, count));
 	}
 
+	/**
+	 * Helper factory for a {@link ShapelessCraftingRecipeBuilder}
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 * @param craftingBookCategory The crafting book category
+	 * @param result The result stack
+	 *
+	 * @return a new {@link ShapelessCraftingRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _, _ -> new")
 	public static ShapelessCraftingRecipeBuilder shapeless(final String directory, final CraftingBookCategory craftingBookCategory,
@@ -91,24 +135,59 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		return new ShapelessCraftingRecipeBuilder(directory, craftingBookCategory, result);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapedCraftingRecipeBuilder}
+	 *
+	 * @param result The result item
+	 *
+	 * @return a new {@link ShapedCraftingRecipeBuilder} using {@value DEFAULT_DIRECTORY}
+	 */
 	@CheckReturnValue
 	@Contract("_ -> new")
+	@SuppressWarnings("unused")
 	public static ShapedCraftingRecipeBuilder shaped(final ItemLike result) {
 		return shaped(DEFAULT_DIRECTORY, result);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapedCraftingRecipeBuilder}
+	 *
+	 * @param result The result item
+	 * @param count The result item count
+	 *
+	 * @return a new {@link ShapedCraftingRecipeBuilder} using {@value DEFAULT_DIRECTORY}
+	 */
 	@CheckReturnValue
 	@Contract("_, _ -> new")
+	@SuppressWarnings("unused")
 	public static ShapedCraftingRecipeBuilder shaped(final ItemLike result, final int count) {
 		return shaped(DEFAULT_DIRECTORY, CraftingBookCategory.MISC, result, count);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapedCraftingRecipeBuilder}
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 * @param result The result item
+	 *
+	 * @return a new {@link ShapedCraftingRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _ -> new")
 	public static ShapedCraftingRecipeBuilder shaped(final String directory, final ItemLike result) {
 		return shaped(directory, CraftingBookCategory.MISC, result, 1);
 	}
 
+	/**
+	 * Helper factory for a {@link ShapedCraftingRecipeBuilder}
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 * @param craftingBookCategory The crafting book category
+	 * @param result The result item
+	 * @param count The result item count
+	 *
+	 * @return a new {@link ShapedCraftingRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _, _, _ -> new")
 	public static ShapedCraftingRecipeBuilder shaped(final String directory, final CraftingBookCategory craftingBookCategory, final ItemLike result,
@@ -116,6 +195,15 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		return shaped(directory, craftingBookCategory, new ItemStack(result, count));
 	}
 
+	/**
+	 * Helper factory for a {@link ShapedCraftingRecipeBuilder}
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 * @param craftingBookCategory The crafting book category
+	 * @param result The result stack
+	 *
+	 * @return a new {@link ShapedCraftingRecipeBuilder}
+	 */
 	@CheckReturnValue
 	@Contract("_, _, _ -> new")
 	public static ShapedCraftingRecipeBuilder shaped(final String directory, final CraftingBookCategory craftingBookCategory,
@@ -124,21 +212,18 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 	}
 
 	@Override
-	@CanIgnoreReturnValue
 	public B unlockedBy(final String criterionName, final Criterion<?> criterion) {
 		criteria.put(criterionName, criterion);
 		return self();
 	}
 
 	@Override
-	@CanIgnoreReturnValue
 	public B group(@Nullable final String groupName) {
 		group = groupName;
 		return self();
 	}
 
 	@Override
-	@CanIgnoreReturnValue
 	public Item getResult() {
 		return result.getItem();
 	}
@@ -159,11 +244,16 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 	}
 
 	@Override
+	@CheckReturnValue
 	protected @Nullable AdvancementBuilder makeAdvancement(final AdvancementBuilder advancement) {
 		criteria.forEach(advancement::addCriterion);
 		return advancement;
 	}
 
+	/**
+	 * {@return self}
+	 */
+	@Contract(value = " -> this", pure = true)
 	protected abstract B self();
 
 	/**
@@ -177,13 +267,39 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		private final ShapedPatternBuilder<ShapedCraftingRecipeBuilder> patternBuilder = new ShapedPatternBuilder<>(this);
 		private boolean showNotification = true;
 
-		public ShapedCraftingRecipeBuilder(final String folderName, final CraftingBookCategory craftingBookCategory, final ItemStack result) {
-			super(folderName, craftingBookCategory, result);
+		/**
+		 * The constructor
+		 *
+		 * @param directory The directory, can be empty to ignore
+		 * @param craftingBookCategory The crafting book category
+		 * @param result The result stack
+		 */
+		public ShapedCraftingRecipeBuilder(final String directory, final CraftingBookCategory craftingBookCategory, final ItemStack result) {
+			super(directory, craftingBookCategory, result);
 		}
 
+		/**
+		 * Sets if a notification should be shown, defaults to {@code true}
+		 *
+		 * @param showNotification If the notification should be shown defaults to {@code true}
+		 *
+		 * @return {@code this}
+		 */
+		@Contract(value = "_ -> this", mutates = "this")
 		public ShapedCraftingRecipeBuilder showNotification(final boolean showNotification) {
 			this.showNotification = showNotification;
 			return self();
+		}
+
+		/**
+		 * Hides the notification
+		 *
+		 * @return {@code this}
+		 */
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public ShapedCraftingRecipeBuilder hideNotification() {
+			return showNotification(false);
 		}
 
 		@Override
@@ -211,8 +327,15 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 
 		private final NonNullList<Ingredient> ingredients = NonNullList.create();
 
-		private ShapelessCraftingRecipeBuilder(final String folderName, final CraftingBookCategory craftingBookCategory, final ItemStack result) {
-			super(folderName, craftingBookCategory, result);
+		/**
+		 * The constructor
+		 *
+		 * @param directory The directory, can be empty to ignore
+		 * @param craftingBookCategory The crafting book category
+		 * @param result The result stack
+		 */
+		public ShapelessCraftingRecipeBuilder(final String directory, final CraftingBookCategory craftingBookCategory, final ItemStack result) {
+			super(directory, craftingBookCategory, result);
 		}
 
 		/**
@@ -223,6 +346,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		 * @return This
 		 */
 		@Contract("_ -> this")
+		@SuppressWarnings("unused")
 		public ShapelessCraftingRecipeBuilder requires(final TagKey<Item> tag) {
 			return requires(Ingredient.of(tag));
 		}
@@ -236,6 +360,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		 * @return This
 		 */
 		@Contract("_, _ -> this")
+		@SuppressWarnings("unused")
 		public ShapelessCraftingRecipeBuilder requires(final TagKey<Item> tag, final int quantity) {
 			return requires(Ingredient.of(tag), quantity);
 		}
@@ -248,6 +373,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		 * @return This
 		 */
 		@Contract("_ -> this")
+		@SuppressWarnings("unused")
 		public ShapelessCraftingRecipeBuilder requires(final ItemLike item) {
 			return requires(Ingredient.of(item));
 		}
@@ -261,6 +387,7 @@ public abstract sealed class CraftingRecipeBuilder<B extends CraftingRecipeBuild
 		 * @return This
 		 */
 		@Contract("_, _ -> this")
+		@SuppressWarnings("unused")
 		public ShapelessCraftingRecipeBuilder requires(final ItemLike item, final int quantity) {
 			return requires(Ingredient.of(item), quantity);
 		}

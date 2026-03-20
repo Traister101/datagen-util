@@ -12,16 +12,24 @@ import java.util.function.Supplier;
 public interface LanguageOutput<T> {
 
 	/**
+	 * Adds a translation
+	 *
 	 * @param translation The translation to add
 	 */
 	void add(LanguageTranslation translation);
 
 	/**
-	 * Get the name from the registry name of the object.
+	 * Adds a simple translation generated from the objects registry name
+	 *
+	 * @param t The object
 	 */
 	void simple(T t);
 
 	/**
+	 * Adds a simple translation generated from the objects registry name
+	 *
+	 * @param t The object supplier (typically some sort of {@link net.neoforged.neoforge.registries.DeferredHolder DeferredHolder})
+	 *
 	 * @implNote Delegates to {@link #simple(Object)}
 	 */
 	@SuppressWarnings("unused")
@@ -30,12 +38,16 @@ public interface LanguageOutput<T> {
 	}
 
 	/**
+	 * Adds a translation
+	 *
 	 * @param t The object
 	 * @param name The name of the object
 	 */
 	void add(T t, String name);
 
 	/**
+	 * Adds a translation
+	 *
 	 * @param t The object supplier (typically some sort of {@link net.neoforged.neoforge.registries.DeferredHolder DeferredHolder})
 	 * @param name The name of the object
 	 *

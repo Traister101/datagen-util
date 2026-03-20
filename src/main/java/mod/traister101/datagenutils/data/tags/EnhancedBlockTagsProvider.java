@@ -10,8 +10,19 @@ import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A provider for block tags allowing definition of tag lang with the rest of the tag definitions
+ */
 public abstract class EnhancedBlockTagsProvider extends StaticRegistryObjectTagsProvider<Block> {
 
+	/**
+	 * The constructor
+	 *
+	 * @param output The pack output
+	 * @param registries The registries
+	 * @param modId The mod id
+	 * @param existingFileHelper The existing files
+	 */
 	@SuppressWarnings("deprecation")
 	public EnhancedBlockTagsProvider(final PackOutput output, final CompletableFuture<Provider> registries, final String modId,
 			final @Nullable ExistingFileHelper existingFileHelper) {

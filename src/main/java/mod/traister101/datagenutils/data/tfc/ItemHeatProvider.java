@@ -5,7 +5,7 @@ import mod.traister101.datagenutils.data.util.tfc.TFCFluidHeat;
 import net.dries007.tfc.common.component.heat.*;
 import net.dries007.tfc.common.recipes.HeatingRecipe;
 import net.dries007.tfc.common.recipes.outputs.ItemStackProvider;
-import net.dries007.tfc.util.data.FluidHeat;
+import net.dries007.tfc.util.data.*;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 import net.minecraft.core.HolderLookup.Provider;
@@ -13,34 +13,51 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.*;
 
+import org.jetbrains.annotations.Contract;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+/**
+ * A provider for TFC's {@link KnappingType}
+ */
 public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinition> implements AdditionalRecipeProvider {
 
 	private final List<RecipeHolder<HeatingRecipe>> meltingRecipes = new ArrayList<>();
 
-	protected ItemHeatProvider(final PackOutput output, final String modid, final CompletableFuture<Provider> lookup) {
-		super(HeatCapability.MANAGER, output, modid, lookup);
+	/**
+	 * The constructor
+	 *
+	 * @param output The output
+	 * @param modid The modid
+	 * @param registries The registries
+	 */
+	protected ItemHeatProvider(final PackOutput output, final String modid, final CompletableFuture<Provider> registries) {
+		super(HeatCapability.MANAGER, output, modid, registries);
 	}
 
 	/**
+	 * {@return new HeatDefinition}
+	 *
 	 * @param ingredient The ingredient
 	 * @param fluidHeat The fluid heat to use see {@link TFCFluidHeat}
 	 * @param units The units
 	 */
+	@Contract("_, _, _ -> new")
 	protected static HeatDefinition heat(final Ingredient ingredient, final FluidHeat fluidHeat, final int units) {
-		return heat(ingredient, (fluidHeat.specificHeatCapacity() / TFCFluidHeat.HEAT_CAPACITY) * (units / 100F),
-				fluidHeat.meltTemperature() * 0.6F, fluidHeat.meltTemperature() * 0.8F);
+		return heat(ingredient, (fluidHeat.specificHeatCapacity() / TFCFluidHeat.HEAT_CAPACITY) * (units / 100F), fluidHeat.meltTemperature() * 0.6F,
+				fluidHeat.meltTemperature() * 0.8F);
 	}
 
 	/**
+	 * {@return new HeatDefinition}
+	 *
 	 * @param ingredient The ingredient
 	 * @param heatCapacity The heat capacity
 	 * @param forgingTemperature The forging temperature
 	 * @param weldingTemperature The welding temperature
 	 */
+	@Contract(value = "_, _, _, _ -> new", pure = true)
 	protected static HeatDefinition heat(final Ingredient ingredient, final float heatCapacity, final float forgingTemperature,
 			final float weldingTemperature) {
 		return new HeatDefinition(ingredient, heatCapacity, forgingTemperature, weldingTemperature);
@@ -52,6 +69,8 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 	}
 
 	/**
+	 * Adds a heat definition and a melting recipe
+	 *
 	 * @param name The name
 	 * @param ingredient The ingredient
 	 * @param fluidHeat The fluid heat see {@link TFCFluidHeat}
@@ -62,6 +81,8 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 	}
 
 	/**
+	 * Adds a heat definition and a melting recipe
+	 *
 	 * @param id The id
 	 * @param ingredient The ingredient
 	 * @param fluidHeat The fluid heat see {@link TFCFluidHeat}
@@ -73,6 +94,8 @@ public abstract class ItemHeatProvider extends DataManagerProvider<HeatDefinitio
 	}
 
 	/**
+	 * Adds a melting recipe
+	 *
 	 * @param id The id
 	 * @param ingredient The ingredient
 	 * @param fluidHeat The fluid heat see {@link TFCFluidHeat}

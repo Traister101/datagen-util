@@ -7,9 +7,12 @@ import net.minecraft.world.level.ItemLike;
 
 import lombok.*;
 import lombok.experimental.Tolerate;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 import java.util.Optional;
 
+/**
+ * A {@link DisplayInfo} "wrapper"
+ */
 @Value
 @Builder
 public class SimpleDisplayInfo {
@@ -49,6 +52,38 @@ public class SimpleDisplayInfo {
 	 */
 	boolean hidden;
 
+	/**
+	 * The constructor
+	 *
+	 * @param icon The icon
+	 * @param title The title
+	 * @param description The description
+	 * @param background The background texture
+	 * @param type The type
+	 * @param showToast If a toast should be shown
+	 * @param announceChat If getting the advancement should get a message in chat
+	 * @param hidden If the advancement should be hidden
+	 */
+	@Contract(pure = true)
+	public SimpleDisplayInfo(final ItemStack icon, final String title, final String description, @Nullable final ResourceLocation background,
+			final AdvancementType type, final boolean showToast, final boolean announceChat, final boolean hidden) {
+		this.icon = icon;
+		this.title = title;
+		this.description = description;
+		this.background = background;
+		this.type = type;
+		this.showToast = showToast;
+		this.announceChat = announceChat;
+		this.hidden = hidden;
+	}
+
+	/**
+	 * Convert to the vanilla {@link DisplayInfo}
+	 *
+	 * @param advancementId The advancement id
+	 *
+	 * @return The vanilla {@link DisplayInfo} representation
+	 */
 	public DisplayInfo toInfo(final ResourceLocation advancementId) {
 		final var title = LanguageTranslation.advancementTitle(advancementId, this.title);
 		final var description = LanguageTranslation.advancementDescription(advancementId, this.description);
@@ -61,6 +96,7 @@ public class SimpleDisplayInfo {
 		output.lang(LanguageTranslation.advancementDescription(advancementId, description));
 	}
 
+	@SuppressWarnings("doclint")
 	public static final class SimpleDisplayInfoBuilder {
 
 		/**

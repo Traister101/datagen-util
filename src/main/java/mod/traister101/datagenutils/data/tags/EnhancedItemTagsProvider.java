@@ -15,11 +15,24 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A provider for item tags allowing definition of tag lang with the rest of the tag definitions
+ */
 public abstract class EnhancedItemTagsProvider extends StaticRegistryObjectTagsProvider<Item> {
 
 	private final CompletableFuture<TagsProvider.TagLookup<Block>> blockTags;
 	private final Map<TagKey<Block>, TagKey<Item>> tagsToCopy = new HashMap<>();
 
+	/**
+	 * The constructor
+	 *
+	 * @param output The pack output
+	 * @param registries The registries
+	 * @param parentTags The parent tags
+	 * @param blockTags The block tags, used for copying
+	 * @param modId The mod id
+	 * @param existingFileHelper The existing files
+	 */
 	@SuppressWarnings("deprecation")
 	public EnhancedItemTagsProvider(final PackOutput output, final CompletableFuture<Provider> registries,
 			final CompletableFuture<TagLookup<Item>> parentTags, final CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, final String modId,
@@ -28,6 +41,15 @@ public abstract class EnhancedItemTagsProvider extends StaticRegistryObjectTagsP
 		this.blockTags = blockTags;
 	}
 
+	/**
+	 * The constructor
+	 *
+	 * @param output The pack output
+	 * @param registries The registries
+	 * @param blockTags The block tags, used for copying
+	 * @param modId The mod id
+	 * @param existingFileHelper The existing files, nullable
+	 */
 	@SuppressWarnings("deprecation")
 	public EnhancedItemTagsProvider(final PackOutput output, final CompletableFuture<Provider> registries,
 			final CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, final String modId,

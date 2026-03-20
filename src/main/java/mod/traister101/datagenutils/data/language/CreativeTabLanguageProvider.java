@@ -7,12 +7,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 
+import org.jetbrains.annotations.Contract;
 import java.util.Objects;
 import java.util.function.Function;
 
+/**
+ * A language provider for {@link CreativeModeTab}s
+ */
 public abstract class CreativeTabLanguageProvider extends RegistryLanguageSubProvider<CreativeModeTab> {
 
 	/**
+	 * The full constructor
+	 *
 	 * @param register The creative tab register
 	 * @param keyFunction Creative Tabs have {@link CreativeModeTab#displayName} which isn't tied to registry name. All tabs in the provided register
 	 * are expected to use the same naming pattern, vanilla uses {@code itemGroup.<tab name>}, an easy way to automatically do this for a
@@ -26,6 +32,8 @@ public abstract class CreativeTabLanguageProvider extends RegistryLanguageSubPro
 	}
 
 	/**
+	 * Shorthand constructor using {@link #vanillaLangKey(CreativeModeTab)} for the keyFunction
+	 *
 	 * @param register The creative tab register.
 	 *
 	 * @implNote Expects all tabs to use the vanilla {@code itemGroup.<tab name>} lang key pattern
@@ -35,6 +43,8 @@ public abstract class CreativeTabLanguageProvider extends RegistryLanguageSubPro
 	}
 
 	/**
+	 * Converts a creative mode tab to its language key in the vanilla key format ({@code itemGroup.<namespace>.<path>})
+	 *
 	 * @param tab The creative tab
 	 *
 	 * @return The language key for the given creative tab
@@ -43,10 +53,27 @@ public abstract class CreativeTabLanguageProvider extends RegistryLanguageSubPro
 		return languageKey(tab, id -> id.toLanguageKey("itemGroup"));
 	}
 
+	/**
+	 * Converts a creative mode tab to its language key using a custom tabIdToLanguageKey function
+	 *
+	 * @param tab The creative tab
+	 * @param tabIdToLanguageKey The function to convert from the tab id to its language key
+	 *
+	 * @return The language key for the given tab
+	 */
 	protected static String languageKey(final CreativeModeTab tab, final Function<ResourceLocation, String> tabIdToLanguageKey) {
 		return tabIdToLanguageKey.apply(Objects.requireNonNull(BuiltInRegistries.CREATIVE_MODE_TAB.getKey(tab), "Unregistered Tab"));
 	}
 
+	/**
+	 * Helper to simplify constructor invocation with a custom tabIdToLanguageKey function
+	 *
+	 * @param tabIdToLanguageKey The function to convert from the tab id to its language key
+	 *
+	 * @return A function that converts a creative tab to its language key useful in {@link #CreativeTabLanguageProvider(DeferredRegister, Function)}
+	 * keyFunction argument
+	 */
+	@Contract(pure = true)
 	protected static Function<CreativeModeTab, String> languageKey(final Function<ResourceLocation, String> tabIdToLanguageKey) {
 		return tab -> languageKey(tab, tabIdToLanguageKey);
 	}

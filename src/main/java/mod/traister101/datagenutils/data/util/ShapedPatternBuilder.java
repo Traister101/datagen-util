@@ -8,7 +8,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 
-import lombok.*;
+import lombok.ToString;
 import java.util.*;
 
 /**
@@ -18,7 +18,6 @@ import java.util.*;
  * @param <B> The parent builder type
  */
 @ToString
-@RequiredArgsConstructor
 public final class ShapedPatternBuilder<B> implements ShapedRecipeBuilder<B> {
 
 	/**
@@ -28,6 +27,15 @@ public final class ShapedPatternBuilder<B> implements ShapedRecipeBuilder<B> {
 	private final B parentBuilder;
 	private final List<String> rows = Lists.newArrayList();
 	private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
+
+	/**
+	 * The constructor
+	 *
+	 * @param parentBuilder The parent builder
+	 */
+	public ShapedPatternBuilder(final B parentBuilder) {
+		this.parentBuilder = parentBuilder;
+	}
 
 	@Override
 	public B define(final Character symbol, final TagKey<Item> tag) {
@@ -110,7 +118,7 @@ public final class ShapedPatternBuilder<B> implements ShapedRecipeBuilder<B> {
 	/**
 	 * Helper interface for Lombok {@link lombok.experimental.Delegate} code gen
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused", "doclint"})
 	public interface Exclusions {
 
 		void validate(final ResourceLocation recipeId);

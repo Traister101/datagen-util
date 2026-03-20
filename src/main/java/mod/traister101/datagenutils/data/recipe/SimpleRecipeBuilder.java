@@ -7,16 +7,32 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 
-import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.Contract;
 import javax.annotation.Nullable;
 
-@AllArgsConstructor
+/**
+ * A simple recipe builder. This exists to primarily give saving recipes a consistent api
+ *
+ * @see #save(RecipeOutput)
+ * @see #save(RecipeOutput, String)
+ * @see #save(RecipeOutput, ResourceLocation)
+ */
 public abstract class SimpleRecipeBuilder {
 
 	/**
 	 * The directory, can be empty to ignore
 	 */
 	private final String directory;
+
+	/**
+	 * The constructor
+	 *
+	 * @param directory The directory, can be empty to ignore
+	 */
+	@Contract(pure = true)
+	public SimpleRecipeBuilder(final String directory) {
+		this.directory = directory;
+	}
 
 	/**
 	 * Helper for getting a default recipe id from an {@link ItemLike}
