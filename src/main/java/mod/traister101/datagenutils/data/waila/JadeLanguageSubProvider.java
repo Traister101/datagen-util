@@ -26,6 +26,12 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 	 * The description lang key post fix
 	 */
 	public static final String DESCRIPTION_POST_FIX = "_desc";
+	/**
+	 * The plugin prefix for all language keys
+	 *
+	 * @see #makeKey(String)
+	 */
+	public static final String PLUGIN_PREFIX = "plugin_";
 	private final String modId;
 	private final List<LanguageTranslation> translations = new ArrayList<>();
 
@@ -46,7 +52,7 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 	 * @return The language key
 	 */
 	protected static String makeKey(final String key) {
-		return Entry.makeKey(key);
+		return Entry.makeKey(PLUGIN_PREFIX + key);
 	}
 
 	@Override
