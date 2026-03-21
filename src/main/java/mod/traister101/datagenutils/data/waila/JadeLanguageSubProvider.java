@@ -116,11 +116,21 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 	}
 
 	/**
+	 * Adds a translation key manually
+	 *
+	 * @param key The key
+	 * @param translation The translation
+	 */
+	protected void add(final String key, final String translation) {
+		add(LanguageTranslation.of(key, translation));
+	}
+
+	/**
 	 * Add a translation manually
 	 *
 	 * @param translation A translation
 	 */
-	private void add(final LanguageTranslation translation) {
+	protected void add(final LanguageTranslation translation) {
 		translations.add(translation);
 	}
 
@@ -232,7 +242,7 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 		/**
 		 * A builder for naming and giving descriptions to enum config values
 		 */
-		protected class EnumValueConfigBuilder {
+		public class EnumValueConfigBuilder {
 
 			private final E value;
 
