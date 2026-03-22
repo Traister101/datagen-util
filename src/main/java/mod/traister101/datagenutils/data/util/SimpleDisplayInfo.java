@@ -7,6 +7,7 @@ import net.minecraft.world.level.ItemLike;
 
 import lombok.*;
 import lombok.experimental.Tolerate;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.*;
 import java.util.Optional;
 
@@ -32,9 +33,7 @@ public class SimpleDisplayInfo {
 	/**
 	 * The background texture
 	 */
-	@Nullable
-	@Getter(AccessLevel.NONE)
-	ResourceLocation background;
+	@Nullable ResourceLocation background;
 	/**
 	 * The advancement type
 	 */
@@ -84,6 +83,7 @@ public class SimpleDisplayInfo {
 	 *
 	 * @return The vanilla {@link DisplayInfo} representation
 	 */
+	@Internal
 	public DisplayInfo toInfo(final ResourceLocation advancementId) {
 		final var title = LanguageTranslation.advancementTitle(advancementId, this.title);
 		final var description = LanguageTranslation.advancementDescription(advancementId, this.description);
@@ -104,12 +104,79 @@ public class SimpleDisplayInfo {
 		 *
 		 * @param item The item to use as an icon
 		 *
-		 * @return The builder
+		 * @return {@code this}
 		 */
 		@Tolerate
 		@SuppressWarnings("unused")
 		public SimpleDisplayInfoBuilder icon(final ItemLike item) {
 			return icon(new ItemStack(item));
+		}
+
+		/**
+		 * Set the advancement type to {@link AdvancementType#TASK}
+		 *
+		 * @return {@code this}
+		 */
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public SimpleDisplayInfoBuilder task() {
+			return type(AdvancementType.TASK);
+		}
+
+		/**
+		 * Set the advancement type to {@link AdvancementType#CHALLENGE}
+		 *
+		 * @return {@code this}
+		 */
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public SimpleDisplayInfoBuilder challenge() {
+			return type(AdvancementType.CHALLENGE);
+		}
+
+		/**
+		 * Set the advancement type to {@link AdvancementType#GOAL}
+		 *
+		 * @return {@code this}
+		 */
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public SimpleDisplayInfoBuilder goal() {
+			return type(AdvancementType.GOAL);
+		}
+
+		/**
+		 * Set the advancement to show a toast
+		 *
+		 * @return {@code this}
+		 */
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public SimpleDisplayInfoBuilder toast() {
+			return showToast(true);
+		}
+
+		/**
+		 * Set the advancement to announce to chat
+		 *
+		 * @return {@code this}
+		 */
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public SimpleDisplayInfoBuilder announce() {
+			return announceChat(true);
+		}
+
+		/**
+		 * Set the advancement to be hidden until obtained
+		 *
+		 * @return {@code this}
+		 */
+		@Tolerate
+		@SuppressWarnings("unused")
+		@Contract(value = "-> this", mutates = "this")
+		public SimpleDisplayInfoBuilder hidden() {
+			return hidden(true);
 		}
 	}
 }
