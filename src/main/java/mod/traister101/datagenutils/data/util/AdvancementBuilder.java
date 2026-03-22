@@ -276,6 +276,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The saved advancement
 	 */
+	@CheckReturnValue
 	public AdvancementHolder save(final AdvancementOutput output, final ResourceLocation advancementId) {
 		if (display != null) {
 			display.save(output, advancementId);
@@ -293,6 +294,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The saved advancement
 	 */
+	@CheckReturnValue
 	@SuppressWarnings("unused")
 	public AdvancementHolder save(final AdvancementOutput output, final String id) {
 		return save(output, ResourceLocation.parse(id));
