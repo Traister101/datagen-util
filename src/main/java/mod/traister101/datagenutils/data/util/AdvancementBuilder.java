@@ -76,8 +76,40 @@ public final class AdvancementBuilder {
 	@CheckReturnValue
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
+	public static AdvancementBuilder childOf(final AdvancementHolder parent) {
+		return childOf(parent.id());
+	}
+
+	/**
+	 * Creates an advancement builder that's a child of another advancement
+	 *
+	 * @param parentId The parent advancement id
+	 *
+	 * @return An advancement builder
+	 */
+	@CheckReturnValue
+	@Contract("_ -> new")
+	@SuppressWarnings("unused")
+	public static AdvancementBuilder childOf(final ResourceLocation parentId) {
+		return new AdvancementBuilder(Optional.of(parentId), true);
+	}
+
+	/**
+	 * Creates an advancement builder that's a child of another advancement
+	 *
+	 * @param parent The parent advancement
+	 *
+	 * @return An advancement builder
+	 *
+	 * @deprecated Poorly named. Use {@link #childOf(AdvancementHolder)} instead
+	 */
+	@CheckReturnValue
+	@Contract("_ -> new")
+	@SuppressWarnings("unused")
+	@InlineMe(replacement = "AdvancementBuilder.childOf(parent)", imports = {"mod.traister101.datagenutils.data.util.AdvancementBuilder"})
+	@Deprecated(since = "1.2.3", forRemoval = true)
 	public static AdvancementBuilder child(final AdvancementHolder parent) {
-		return new AdvancementBuilder(Optional.of(parent.id()), true);
+		return childOf(parent);
 	}
 
 	/**
@@ -86,12 +118,16 @@ public final class AdvancementBuilder {
 	 * @param parentId The parent advancement
 	 *
 	 * @return An advancement builder
+	 *
+	 * @deprecated Poorly named. Use {@link #childOf(ResourceLocation)} instead
 	 */
 	@CheckReturnValue
 	@Contract("_ -> new")
 	@SuppressWarnings("unused")
+	@InlineMe(replacement = "AdvancementBuilder.childOf(parentId)", imports = {"mod.traister101.datagenutils.data.util.AdvancementBuilder"})
+	@Deprecated(since = "1.2.3", forRemoval = true)
 	public static AdvancementBuilder child(final ResourceLocation parentId) {
-		return new AdvancementBuilder(Optional.of(parentId), true);
+		return childOf(parentId);
 	}
 
 	/**
