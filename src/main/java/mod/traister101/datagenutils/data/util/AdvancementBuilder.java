@@ -206,9 +206,21 @@ public final class AdvancementBuilder {
 	 *
 	 * @param displayInfoBuilder The display info builder
 	 *
-	 * @return The builder
+	 * @return {@code this}
 	 */
 	@SuppressWarnings("unused")
+	@Contract(value = "_ -> this", mutates = "this")
+	public AdvancementBuilder display(final UnaryOperator<SimpleDisplayInfo.SimpleDisplayInfoBuilder> displayInfoBuilder) {
+		return display(displayInfoBuilder.apply(SimpleDisplayInfo.builder()));
+	}
+
+	/**
+	 * Sets the display properties
+	 *
+	 * @param displayInfoBuilder The display info builder
+	 *
+	 * @return The builder
+	 */
 	@Contract(value = "_ -> this", mutates = "this")
 	public AdvancementBuilder display(final SimpleDisplayInfo.SimpleDisplayInfoBuilder displayInfoBuilder) {
 		return display(displayInfoBuilder.build());
