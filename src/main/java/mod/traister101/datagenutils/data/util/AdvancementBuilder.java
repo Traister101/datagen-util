@@ -11,7 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.*;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.*;
 
 /**
  * An advancement builder
@@ -26,6 +27,7 @@ public final class AdvancementBuilder {
 	private final Optional<ResourceLocation> parent;
 	private final ImmutableMap.Builder<String, Criterion<?>> criteria = ImmutableMap.builder();
 	private final boolean sendsTelemetryEvent;
+	private final List<ChildAdvancement> children = new ArrayList<>();
 	@Nullable
 	private SimpleDisplayInfo display;
 	private AdvancementRewards rewards = AdvancementRewards.EMPTY;
@@ -247,6 +249,58 @@ public final class AdvancementBuilder {
 	}
 
 	/**
+	 * Adds a child advancement
+	 *
+	 * @param id A string for the id, if no namespace is specified it'll default to {@value ResourceLocation#DEFAULT_NAMESPACE} as per
+	 * {@link ResourceLocation#parse(String)}
+	 * @param child The child advancement
+	 *
+	 * @return {@code this}
+	 */
+	@SuppressWarnings("unused")
+	@Contract(value = "_, _ -> this", mutates = "this")
+	public AdvancementBuilder child(final String id, final Consumer<AdvancementBuilder> child) {
+		return child(ResourceLocation.parse(id), child);
+	}
+
+	/**
+	 * Adds a child advancement
+	 *
+	 * @param id The child id
+	 * @param child The child advancement
+	 *
+	 * @return {@code this}
+	 */
+	@Contract("_, _ -> this")
+	public AdvancementBuilder child(final ResourceLocation id, final Consumer<AdvancementBuilder> child) {
+		children.add(new ChildAdvancement(id, child));
+		return this;
+	}
+
+	/**
+	 * Builds the children advancements. You should only ever call this if you want to use this advancement builder in a vanilla provider. If you are
+	 * using {@link mod.traister101.datagenutils.data.EnhancedAdvancementProvider EnhancedAdvancementProvider} and
+	 * {@link mod.traister101.datagenutils.data.AdvancementSubProvider AdvancementSubProvider} always use one of the {@code save} overloads
+	 *
+	 * @param parent The parent advancement holder
+	 *
+	 * @return A list of all the advancement children
+	 *
+	 * @see #save(AdvancementOutput, String)
+	 * @see #save(AdvancementOutput, ResourceLocation)
+	 */
+	@Unmodifiable
+	@SuppressWarnings("unused")
+	@Contract(value = "_ -> new", pure = true)
+	public List<AdvancementHolder> buildChildren(final AdvancementHolder parent) {
+		return children.stream().map(child -> {
+			final var builder = childOf(parent);
+			child.consumer.accept(builder);
+			return builder.build(child.id);
+		}).toList();
+	}
+
+	/**
 	 * Build the advancement
 	 *
 	 * @param advancementId The advancement id
@@ -269,7 +323,7 @@ public final class AdvancementBuilder {
 	}
 
 	/**
-	 * Saves the advancement to the output
+	 * Saves the advancement and any children to the output
 	 *
 	 * @param output The advancement output
 	 * @param advancementId The advancement id
@@ -281,16 +335,23 @@ public final class AdvancementBuilder {
 		if (display != null) {
 			display.save(output, advancementId);
 		}
-		final var build = build(advancementId);
+		final var advancement = build(advancementId);
 
-		return output.accept(build);
+		children.forEach(c -> {
+			final var child = childOf(advancement);
+			c.consumer.accept(child);
+			child.save(output, c.id);
+		});
+
+		return output.accept(advancement);
 	}
 
 	/**
 	 * Saves the advancement to the output
 	 *
 	 * @param output The advancement output
-	 * @param id A resource string for the location, if no namespace is specified it'll default to {@value ResourceLocation#DEFAULT_NAMESPACE}
+	 * @param id A string for the id, if no namespace is specified it'll default to {@value ResourceLocation#DEFAULT_NAMESPACE} as per
+	 * {@link ResourceLocation#parse(String)}
 	 *
 	 * @return The saved advancement
 	 */
@@ -299,4 +360,6 @@ public final class AdvancementBuilder {
 	public AdvancementHolder save(final AdvancementOutput output, final String id) {
 		return save(output, ResourceLocation.parse(id));
 	}
+
+	private record ChildAdvancement(ResourceLocation id, Consumer<AdvancementBuilder> consumer) {}
 }
