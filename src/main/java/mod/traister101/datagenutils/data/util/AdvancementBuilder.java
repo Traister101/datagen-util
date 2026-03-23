@@ -5,10 +5,13 @@ import com.google.errorprone.annotations.*;
 import com.google.errorprone.annotations.CheckReturnValue;
 
 import net.minecraft.advancements.*;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.AdvancementRequirements.Strategy;
+import net.minecraft.advancements.critereon.*;
+import net.minecraft.advancements.critereon.ItemPredicate.Builder;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 
 import org.jetbrains.annotations.*;
 import java.util.*;
@@ -178,6 +181,7 @@ public final class AdvancementBuilder {
 	 *
 	 * @return The builder
 	 *
+	 * @see #requireAny()
 	 * @see AdvancementRequirements.Strategy#AND
 	 * @see AdvancementRequirements.Strategy#OR
 	 */
@@ -185,6 +189,57 @@ public final class AdvancementBuilder {
 	public AdvancementBuilder requirementsStrategy(final AdvancementRequirements.Strategy strategy) {
 		this.strategy = strategy;
 		return this;
+	}
+
+	/**
+	 * Sets the requirements strategy to {@link Strategy#OR}
+	 *
+	 * @return {@code this}
+	 */
+	@SuppressWarnings("unused")
+	@Contract(value = "-> this", mutates = "this")
+	public AdvancementBuilder requireAny() {
+		return requirementsStrategy(Strategy.OR);
+	}
+
+	/**
+	 * Helper for adding a {@link InventoryChangeTrigger.TriggerInstance} {@link Criterion}
+	 *
+	 * @param name The criteria name
+	 * @param items The items
+	 *
+	 * @return {@code this}
+	 */
+	@SuppressWarnings("unused")
+	@Contract(value = "_, _ -> this", mutates = "this")
+	public AdvancementBuilder hasItems(final String name, final ItemLike... items) {
+		return hasItems(name, Builder.item().of(items));
+	}
+
+	/**
+	 * Helper for adding a {@link InventoryChangeTrigger.TriggerInstance} {@link Criterion}
+	 *
+	 * @param name The criteria name
+	 * @param items The predicate builders
+	 *
+	 * @return {@code this}
+	 */
+	@Contract(value = "_, _ -> this", mutates = "this")
+	public AdvancementBuilder hasItems(final String name, final ItemPredicate.Builder... items) {
+		return hasItems(name, Arrays.stream(items).map(Builder::build).toArray(ItemPredicate[]::new));
+	}
+
+	/**
+	 * Helper for adding a {@link InventoryChangeTrigger.TriggerInstance} {@link Criterion}
+	 *
+	 * @param name The criteria name
+	 * @param items The item predicates
+	 *
+	 * @return {@code this}
+	 */
+	@Contract(value = "_, _ -> this", mutates = "this")
+	public AdvancementBuilder hasItems(final String name, final ItemPredicate... items) {
+		return addCriterion(name, InventoryChangeTrigger.TriggerInstance.hasItems(items));
 	}
 
 	/**
