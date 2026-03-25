@@ -2,6 +2,7 @@ package mod.traister101.datagenutils.data.tags;
 
 import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.*;
+import com.mojang.blaze3d.DontObfuscate;
 import mod.traister101.datagenutils.data.language.ExtraLanguageProvider;
 import mod.traister101.datagenutils.data.util.LanguageTranslation;
 import net.neoforged.neoforge.common.CommonHooks;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.*;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.*;
+import java.util.function.Predicate;
 import java.util.stream.*;
 
 /**
@@ -55,7 +56,7 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 	protected final ExistingFileHelper existingFileHelper;
 	private final CompletableFuture<Provider> lookupProvider;
 	private final CompletableFuture<Void> contentsDone = new CompletableFuture<>();
-	private final CompletableFuture<TagLookup<T>> parentProvider;
+	private final CompletableFuture<TagsProvider.TagLookup<T>> parentProvider;
 	private final ExistingFileHelper.IResourceType resourceType;
 	private final ExistingFileHelper.IResourceType elementResourceType; // FORGE: Resource type for validating required references to datapack registry elements.
 	private final Map<TagKey<T>, String> languageTranslations = new HashMap<>();
@@ -71,7 +72,7 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 	 */
 	protected EnhancedTagsProvider(final PackOutput output, final ResourceKey<? extends Registry<T>> registryKey,
 			final CompletableFuture<HolderLookup.Provider> registries, final String modId, final @Nullable ExistingFileHelper existingFileHelper) {
-		this(output, registryKey, registries, CompletableFuture.completedFuture(TagLookup.empty()), modId, existingFileHelper);
+		this(output, registryKey, registries, CompletableFuture.completedFuture(TagsProvider.TagLookup.empty()), modId, existingFileHelper);
 	}
 
 	/**
@@ -85,8 +86,8 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 	 * @param existingFileHelper The existing file helper
 	 */
 	protected EnhancedTagsProvider(final PackOutput output, final ResourceKey<? extends Registry<T>> registryKey,
-			final CompletableFuture<HolderLookup.Provider> registries, final CompletableFuture<TagLookup<T>> parentTags, final String modId,
-			final @Nullable ExistingFileHelper existingFileHelper) {
+			final CompletableFuture<HolderLookup.Provider> registries, final CompletableFuture<TagsProvider.TagLookup<T>> parentTags,
+			final String modId, final @Nullable ExistingFileHelper existingFileHelper) {
 		this.pathProvider = output.createRegistryTagsPathProvider(registryKey);
 		this.registryKey = registryKey;
 		this.parentProvider = parentTags;
@@ -117,7 +118,7 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 
 	@Override
 	public CompletableFuture<?> run(final CachedOutput output) {
-		record CombinedData<T>(HolderLookup.Provider contents, TagLookup<T> parent) {}
+		record CombinedData<T>(HolderLookup.Provider contents, TagsProvider.TagLookup<T> parent) {}
 
 		return createContentsProvider().thenApply(registries -> {
 			contentsDone.complete(null);
@@ -210,7 +211,7 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 	 * {@return A future tag lookup that's complete once tags run}
 	 */
 	@SuppressWarnings("unused")
-	public CompletableFuture<TagLookup<T>> contentsGetter() {
+	public CompletableFuture<TagsProvider.TagLookup<T>> contentsGetter() {
 		return this.contentsDone.thenApply(unused -> tagKey -> Optional.ofNullable(builders.get(tagKey.location())));
 	}
 
@@ -231,14 +232,17 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 	 * @param <T> The object type
 	 */
 	@FunctionalInterface
-	public interface TagLookup<T> extends Function<TagKey<T>, Optional<TagBuilder>> {
+	@Deprecated(since = "1.2.3", forRemoval = true)
+	public interface TagLookup<T> extends TagsProvider.TagLookup<T> {
 
 		/**
 		 * {@return TagLookup that always returns empty}
 		 *
 		 * @param <T> The object type
 		 */
+		@DoNotCall
 		@Contract(pure = true)
+		@InlineMe(replacement = "TagLookup.empty()", imports = {"net.minecraft.data.tags.TagsProvider.TagLookup"}, staticImports = {"net.minecraft.data.tags.TagsProvider.TagLookup.empty"})
 		static <T> TagLookup<T> empty() {
 			return tag -> Optional.empty();
 		}
@@ -248,8 +252,10 @@ public abstract class EnhancedTagsProvider<T> implements DataProvider, ExtraLang
 		 *
 		 * @param tag The tag
 		 */
+		@DoNotCall
+		@InlineMe(replacement = "TagLookup.contains(tag)", imports = {"net.minecraft.data.tags.TagsProvider.TagLookup"})
 		default boolean contains(final TagKey<T> tag) {
-			return this.apply(tag).isPresent();
+			return TagsProvider.TagLookup.super.contains(tag);
 		}
 	}
 

@@ -5,6 +5,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.core.Registry;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.*;
 import net.minecraft.world.item.Item;
@@ -37,7 +38,7 @@ public abstract class StaticRegistryObjectTagsProvider<T> extends EnhancedTagsPr
 	 * @param existingFileHelper The existing file helper
 	 */
 	protected StaticRegistryObjectTagsProvider(final PackOutput output, final ResourceKey<? extends Registry<T>> registryKey,
-			final CompletableFuture<Provider> registries, final CompletableFuture<TagLookup<T>> parentTags,
+			final CompletableFuture<Provider> registries, final CompletableFuture<TagsProvider.TagLookup<T>> parentTags,
 			final Function<T, ResourceKey<T>> keyExtractor, final String modId, final @Nullable ExistingFileHelper existingFileHelper) {
 		super(output, registryKey, registries, parentTags, modId, existingFileHelper);
 		this.keyExtractor = keyExtractor;

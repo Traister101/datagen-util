@@ -35,7 +35,7 @@ public abstract class EnhancedItemTagsProvider extends StaticRegistryObjectTagsP
 	 */
 	@SuppressWarnings("deprecation")
 	public EnhancedItemTagsProvider(final PackOutput output, final CompletableFuture<Provider> registries,
-			final CompletableFuture<TagLookup<Item>> parentTags, final CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, final String modId,
+			final CompletableFuture<TagsProvider.TagLookup<Item>> parentTags, final CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, final String modId,
 			final @Nullable ExistingFileHelper existingFileHelper) {
 		super(output, Registries.ITEM, registries, parentTags, item -> item.builtInRegistryHolder().key(), modId, existingFileHelper);
 		this.blockTags = blockTags;
