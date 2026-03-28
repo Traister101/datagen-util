@@ -5,6 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
@@ -50,6 +51,7 @@ public abstract class EnhancedRecipeProvider extends RecipeProvider {
 		 * @implSpec Both the id and value need non-null values. {@link RecipeHolder#id()} is used as is, and {@link RecipeHolder#value()} is encoded
 		 * directly
 		 */
+		@OverrideOnly
 		Stream<? extends RecipeHolder<?>> additionalRecipes();
 	}
 }
