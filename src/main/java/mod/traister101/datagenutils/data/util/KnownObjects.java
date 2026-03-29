@@ -2,9 +2,9 @@ package mod.traister101.datagenutils.data.util;
 
 import net.neoforged.neoforge.registries.*;
 
+import net.minecraft.core.*;
 import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.*;
 
 import lombok.*;
@@ -32,11 +32,11 @@ public final class KnownObjects<T> {
 	 */
 	private final Function<T, String> keyFunction;
 	/**
-	 * The objects registry name
+	 * The objects name, when applicable this should be its registry name
 	 */
-	private final Function<T, ResourceLocation> locationFunction;
+	private final Function<T, String> objectNameFunction;
 	/**
-	 * An iterable of the known objects
+	 * A collection of the known objects
 	 */
 	private final Collection<T> knownObjects;
 
@@ -48,14 +48,46 @@ public final class KnownObjects<T> {
 	 * @param keyFunction The function to convert the object to a language key
 	 * @param locationFunction A function to convert from the object to an id
 	 * @param knownObjects A collection of the known objects
+	 *
+	 * @deprecated Use {@link #create(String, Function, Function, Collection)}
 	 */
+	@Deprecated(since = "1.2.3", forRemoval = true)
 	@Contract(pure = true)
 	public KnownObjects(final String name, final Function<T, String> keyFunction, final Function<T, ResourceLocation> locationFunction,
 			final Collection<T> knownObjects) {
 		this.name = name;
 		this.keyFunction = keyFunction;
-		this.locationFunction = locationFunction;
+		this.objectNameFunction = locationFunction.andThen(ResourceLocation::toString);
 		this.knownObjects = knownObjects;
+	}
+
+	private KnownObjects(final String name, final Function<T, String> keyFunction, final Function<T, String> objectNameFunction,
+			final Collection<T> knownObjects, boolean dummy) {
+		this.name = name;
+		this.keyFunction = keyFunction;
+		this.objectNameFunction = objectNameFunction;
+		this.knownObjects = knownObjects;
+	}
+
+	/**
+	 * The standard factory. You should generally use one of the other two factory functions {@link #fromRegister(DeferredRegister, Function)} and
+	 * {@link #dynamicRegistry(Provider, ResourceKey, Function, String)}
+	 *
+	 * @param name The name of the known objects. This should try and include the "object source" such as
+	 * {@literal "DeferredRegister[<registry name>]"} for those sourced from a {@link DeferredRegister} or
+	 * {@literal "DynamicRegistry[<registry name>]"} for those sourced from a dynamic registry
+	 * @param keyFunction The function to convert the object to a language key
+	 * @param objectNameFunction A function to convert from the object to its name. Typically, these should be namespaced usually via
+	 * {@link ResourceLocation#toString()}
+	 * @param objects A collection of the known objects
+	 * @param <T> The object type
+	 *
+	 * @return A {@link KnownObjects} which handles the provided objects
+	 */
+	@Contract(value = "_, _, _, _ -> new", pure = true)
+	public static <T> KnownObjects<T> create(final String name, final Function<T, String> keyFunction, final Function<T, String> objectNameFunction,
+			final Collection<T> objects) {
+		return new KnownObjects<>(name, keyFunction, objectNameFunction, objects, false);
 	}
 
 	/**
@@ -70,8 +102,8 @@ public final class KnownObjects<T> {
 	@Contract("_, _ -> new")
 	public static <T> KnownObjects<DeferredHolder<T, ? extends T>> fromRegister(final DeferredRegister<T> register,
 			final Function<T, String> keyFunction) {
-		return new KnownObjects<>("DeferredRegister[" + register.getRegistryName() + "]", keyFunction.compose(DeferredHolder::get),
-				DeferredHolder::getId, register.getEntries());
+		return create("DeferredRegister[" + register.getRegistryName() + "]", keyFunction.compose(DeferredHolder::get), Holder::getRegisteredName,
+				register.getEntries());
 	}
 
 	/**
@@ -88,12 +120,12 @@ public final class KnownObjects<T> {
 	@Contract("_, _, _, _ -> new")
 	public static <T> KnownObjects<Reference<T>> dynamicRegistry(final Provider registryProvider, final ResourceKey<Registry<T>> registryKey,
 			final Function<ResourceLocation, String> keyFunction, final String modid) {
-		final Function<Reference<T>, ResourceLocation> holderToLocation = holder -> holder.key().location();
 		final var knownObjects = registryProvider.lookupOrThrow(registryKey)
 				.listElements()
 				.filter(holder -> holder.key().location().getNamespace().equals(modid))
 				.toList();
-		return new KnownObjects<>("Registry [" + registryKey.location() + "]", keyFunction.compose(holderToLocation), holderToLocation, knownObjects);
+		return create("DynamicRegistry[" + registryKey.location() + "]", keyFunction.compose(holder -> holder.key().location()),
+				Holder::getRegisteredName, knownObjects);
 	}
 
 	/**
@@ -101,7 +133,7 @@ public final class KnownObjects<T> {
 	 */
 	@ApiStatus.Internal
 	public Stream<KnownObject> knownObjects() {
-		return knownObjects.stream().map(t -> new KnownObject(keyFunction.apply(t), locationFunction.apply(t)));
+		return knownObjects.stream().map(t -> new KnownObject(keyFunction.apply(t), objectNameFunction.apply(t)));
 	}
 
 	/**
@@ -117,20 +149,20 @@ public final class KnownObjects<T> {
 		 */
 		String langKey;
 		/**
-		 * The id
+		 * The name
 		 */
-		ResourceLocation id;
+		String name;
 
 		/**
 		 * The constructor
 		 *
 		 * @param langKey The language key
-		 * @param id The id
+		 * @param name The name
 		 */
 		@Contract(pure = true)
-		public KnownObject(final String langKey, final ResourceLocation id) {
+		public KnownObject(final String langKey, final String name) {
 			this.langKey = langKey;
-			this.id = id;
+			this.name = name;
 		}
 	}
 }

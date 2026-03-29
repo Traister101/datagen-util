@@ -156,7 +156,7 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 				.filter(knownObject -> !data.contains(LanguageTranslation.of(knownObject.langKey(), "untranslated")))
 				.forEach(knownObject -> {
 					throw new IllegalStateException(
-							String.format(Locale.ROOT, "Missing lang entry for '%s' in '%s'", knownObject.id(), contents.name()));
+							String.format(Locale.ROOT, "Missing lang entry for '%s' in '%s'", knownObject.name(), contents.name()));
 				});
 	}
 

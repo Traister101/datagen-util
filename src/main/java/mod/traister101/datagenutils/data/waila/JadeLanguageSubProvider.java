@@ -58,7 +58,8 @@ public abstract class JadeLanguageSubProvider implements EnhancedLanguageSubProv
 	@Override
 	public @Nullable KnownObjects<?> knownObjects(final Provider provider) {
 		final var keys = PluginConfig.INSTANCE.getKeys(modId);
-		return new KnownObjects<>("Jade Config entries", resourceLocation -> makeKey(resourceLocation.toLanguageKey()), Function.identity(), keys);
+		return KnownObjects.create("Jade Config entries", resourceLocation -> makeKey(resourceLocation.toLanguageKey()), ResourceLocation::toString,
+				keys);
 	}
 
 	@Override
