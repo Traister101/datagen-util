@@ -120,7 +120,7 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	}
 
 	/**
-	 * Returns a stream of the known objects commonly Items, Blocks and Entities though especially any type can be checked
+	 * Returns a stream of the known objects commonly Items, Blocks and Entities though essentially any type can be checked
 	 *
 	 * @param provider The registry provider
 	 *
