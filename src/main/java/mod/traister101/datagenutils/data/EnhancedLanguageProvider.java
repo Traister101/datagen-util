@@ -4,15 +4,20 @@ import com.google.gson.JsonObject;
 import mod.traister101.datagenutils.data.language.*;
 import mod.traister101.datagenutils.data.util.*;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
+import net.minecraft.core.*;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.*;
 import net.minecraft.data.PackOutput.Target;
+import net.minecraft.resources.*;
 
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.Contract;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
@@ -73,6 +78,37 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	}
 
 	/**
+	 * A helper function for {@link DeferredRegister}s which consist exclusively of registry names valid for
+	 * {@link LanguageOutput#simple(Supplier)}
+	 *
+	 * @param register The register
+	 * @param keyFunction A function to convert the registry object into a language key
+	 * @param <T> The game object type
+	 *
+	 * @return A language sub provider for "simply named" objects sourced from a deferred register
+	 *
+	 * @throws IllegalArgumentException If the provided register contains any non "simply named" objects
+	 */
+	@Experimental
+	@Contract(value = "_, _ -> new", pure = true)
+	protected static <T> EnhancedLanguageSubProvider simpleStaticLanguage(final DeferredRegister<T> register, final Function<T, String> keyFunction) {
+		{
+			final var invalidHolders = register.getEntries().stream().map(Holder::getRegisteredName).filter(s -> s.contains("/")).toList();
+			if (!invalidHolders.isEmpty()) {
+				throw new IllegalArgumentException(
+						"Unsupported registry name(s) in DeferredRegister[" + register.getRegistryName() + "]. Unsupported names: " + String.join(
+								", ", invalidHolders));
+			}
+		}
+		return new RegistryLanguageSubProvider<>(register, keyFunction) {
+			@Override
+			protected void addTranslations(final LanguageOutput<T> output) {
+				register.getEntries().forEach(output::simple);
+			}
+		};
+	}
+
+	/**
 	 * Adds extra {@link ExtraLanguageProvider}s to the language provider
 	 *
 	 * @param extraLanguageProviders One or many extra language providers.
@@ -87,6 +123,29 @@ public abstract class EnhancedLanguageProvider implements DataProvider {
 	public EnhancedLanguageProvider extraLanguage(final ExtraLanguageProvider... extraLanguageProviders) {
 		this.extraLanguageProviders.addAll(Arrays.asList(extraLanguageProviders));
 		return this;
+	}
+
+	/**
+	 * A helper function for dynamic registries which consist exclusively of registry names valid for {@link LanguageOutput#simple(Object)}
+	 *
+	 * @param modId The mod id
+	 * @param registryKey The registry key
+	 * @param keyFunction The function to convert an id to a language key
+	 * @param keyStream A stream of resource keys which are "simply named"
+	 * @param <T> The object type
+	 *
+	 * @return A language sub provider for "simply named" objects sourced from a dynamic registry
+	 */
+	@Experimental
+	@Contract(value = "_, _, _, _ -> new", pure = true)
+	protected final <T> EnhancedLanguageSubProvider simpleDynamicLanguage(final String modId, final ResourceKey<Registry<T>> registryKey,
+			final Function<ResourceLocation, String> keyFunction, final Stream<ResourceKey<T>> keyStream) {
+		return new DynamicRegistryLanguageSubProvider<>(registryKey, keyFunction, modId) {
+			@Override
+			protected void addTranslations(final LanguageOutput<ResourceKey<T>> output) {
+				keyStream.forEach(output::simple);
+			}
+		};
 	}
 
 	/**
